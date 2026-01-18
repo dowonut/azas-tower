@@ -53,7 +53,7 @@ export function BackgroundSprite({
       <pixiContainer
         ref={ref}
         // tint={overlay ? undefined : "red"}
-        alpha={overlay ? 0.8 : 1}
+        alpha={overlay ? 0.5 : 1}
         eventMode="static"
         scale={scale}
         {...props}
@@ -61,18 +61,19 @@ export function BackgroundSprite({
         {mapTiles(filteredTiles)}
       </pixiContainer>
 
-      {/* {!!tileUnderPlayer && (
+      {!!tileUnderPlayer && (
         <pixiContainer
           ref={ref}
           tint="blue"
           alpha={0.5}
+          visible={!overlay}
           eventMode="static"
           scale={scale}
           {...props}
         >
           {mapTiles([tileUnderPlayer])}
         </pixiContainer>
-      )} */}
+      )}
     </>
   );
 }
