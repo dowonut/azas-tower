@@ -7,3 +7,8 @@ declare module "@pixi/react" {
     pixiCustomViewport: PixiReactElementProps<typeof CustomViewport>;
   }
 }
+
+declare module "*.tmx" {
+  const content: string;
+  export default content;
+}

@@ -5,6 +5,8 @@ import type { Direction } from "../types";
 
 type PlayerCharacterState = {
   position: PointData;
+  tilePosition: PointData;
+  layer: number;
   desiredPosition?: PointData;
 };
 
@@ -14,7 +16,9 @@ type PlayerCharacterAction = {
 };
 
 const INITIAL_STATE: PlayerCharacterState = {
-  position: { x: 100, y: 100 },
+  position: { x: 16 * 3 * 15, y: 8 * 3 * 45 },
+  tilePosition: { x: 0, y: 0 },
+  layer: 1,
 };
 
 export const usePlayerCharacterStore = create<

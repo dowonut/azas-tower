@@ -1,5 +1,5 @@
 import { Application, extend } from "@pixi/react";
-import { Container, Graphics, Sprite, Text } from "pixi.js";
+import { Container, Graphics, RenderLayer, Sprite, Text } from "pixi.js";
 
 import { useCallback, useRef, useState } from "react";
 
@@ -18,6 +18,7 @@ extend({
   Sprite,
   Text,
   CustomViewport,
+  RenderLayer,
 });
 
 export function Content() {
@@ -27,6 +28,7 @@ export function Content() {
         <pixiContainer>
           <Background />
           <PlayerCharacter />
+          <Background overlay />
         </pixiContainer>
       </Viewport>
     </>
