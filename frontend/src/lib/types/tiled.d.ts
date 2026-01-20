@@ -9,7 +9,7 @@ export type Tileset = {
   tilecount: number;
   tiledversion: string;
   tileheight: number;
-  tiles: Tile[];
+  tiles?: Tile[];
   tilewidth: number;
   type: string;
   version: string;
@@ -78,9 +78,9 @@ export type Map = {
 };
 
 export type MapLayer = {
-  data: number[];
-  width: number;
-  height: number;
+  data?: number[];
+  width?: number;
+  height?: number;
   id: number;
   name: string;
   opacity: number;

@@ -7,6 +7,8 @@ import { parseTilemap } from "../functions/parse-tilemap";
 import { usePlayerCharacterStore } from "../stores/player-character-store";
 import { useWorldStore } from "../stores/world-store";
 import { getTileUnderPlayer } from "../functions/get-tile-under-player";
+import map from "../../assets/maps/map-1.json";
+import tileset from "../../assets/tilesets/background-tileset.json";
 
 export function BackgroundSprite({
   ref,
@@ -24,7 +26,7 @@ export function BackgroundSprite({
   } = usePlayerCharacterStore(useShallow((state) => state));
 
   useEffect(() => {
-    parseTilemap().then((parsedTiles) => {
+    parseTilemap({ map, tileset }).then((parsedTiles) => {
       update({ tiles: parsedTiles });
       console.log("Parsed tiles:", parsedTiles.length);
     });

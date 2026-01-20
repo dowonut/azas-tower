@@ -1,5 +1,12 @@
 import { Application, extend } from "@pixi/react";
-import { Container, Graphics, RenderLayer, Sprite, Text } from "pixi.js";
+import {
+  AnimatedSprite,
+  Container,
+  Graphics,
+  RenderLayer,
+  Sprite,
+  Text,
+} from "pixi.js";
 
 import { useCallback, useRef, useState } from "react";
 
@@ -10,12 +17,14 @@ import { CustomViewport } from "./lib/classes/custom-viewport";
 import { Background } from "./lib/components/background";
 import { Viewport } from "./lib/components/viewport";
 import { MovementHandler } from "./lib/handlers/movement-handler";
+import { MoveIndicator } from "./lib/components/move-indicator";
 
 // Tell @pixi/react which Pixi.js components are available
 extend({
   Container,
   Graphics,
   Sprite,
+  AnimatedSprite,
   Text,
   CustomViewport,
   RenderLayer,
@@ -27,6 +36,7 @@ export function Content() {
       <Viewport>
         <pixiContainer>
           <Background />
+          <MoveIndicator />
           <PlayerCharacter />
           <Background overlay />
         </pixiContainer>

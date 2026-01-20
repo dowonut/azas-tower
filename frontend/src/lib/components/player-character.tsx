@@ -1,12 +1,12 @@
+import { useTick } from "@pixi/react";
 import { Assets, Sprite, Texture, type TextureSourceOptions } from "pixi.js";
 import { useEffect, useRef, useState } from "react";
-import { usePlayerCharacterStore } from "../stores/player-character-store";
 import { useShallow } from "zustand/shallow";
-import { useTick } from "@pixi/react";
+import { getTileUnderPlayer } from "../functions/get-tile-under-player";
 import { round } from "../functions/round";
 import { toTilePosition } from "../functions/to-tile-position";
+import { usePlayerCharacterStore } from "../stores/player-character-store";
 import { useWorldStore } from "../stores/world-store";
-import { getTileUnderPlayer } from "../functions/get-tile-under-player";
 
 export function PlayerCharacter() {
   const spriteRef = useRef<Sprite | null>(null);
@@ -84,22 +84,24 @@ export function PlayerCharacter() {
       src: "https://pixijs.com/assets/bunny.png",
       data: { scaleMode: "nearest" } satisfies TextureSourceOptions,
     }).then((result) => setTexture(result));
-  }, [texture]);
+  }, []);
 
   return (
-    <pixiSprite
-      ref={spriteRef}
-      anchor={{ x: 0.5, y: 0.9 }}
-      eventMode="static"
-      onClick={() => setIsActive(!isActive)}
-      onPointerOver={() => setIsHovered(true)}
-      onPointerOut={() => setIsHovered(false)}
-      scale={3}
-      texture={texture}
-      tint={isHovered ? "red" : undefined}
-      cursor="pointer"
-      x={x}
-      y={y}
-    />
+    <>
+      <pixiSprite
+        ref={spriteRef}
+        anchor={{ x: 0.5, y: 0.9 }}
+        eventMode="static"
+        onClick={() => setIsActive(!isActive)}
+        onPointerOver={() => setIsHovered(true)}
+        onPointerOut={() => setIsHovered(false)}
+        scale={3}
+        texture={texture}
+        tint={isHovered ? "red" : undefined}
+        cursor="pointer"
+        x={x}
+        y={y}
+      />
+    </>
   );
 }

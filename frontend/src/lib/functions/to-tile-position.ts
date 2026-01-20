@@ -19,7 +19,7 @@ export function toTilePosition(
   const yFactor = position.y / scale / quarterHeight;
 
   return {
-    x: Math.floor((xFactor + yFactor) / 2 - 1),
-    y: Math.floor((yFactor - xFactor) / 2),
+    x: Math.round((xFactor + yFactor) / 2 - 1),
+    y: Math.round((yFactor - xFactor) / 2),
   };
 }

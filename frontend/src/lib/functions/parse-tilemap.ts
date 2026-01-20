@@ -1,26 +1,24 @@
-import { Assets, Spritesheet } from "pixi.js";
-import map from "../../assets/maps/map-1.json";
-import tileset from "../../assets/tilesets/isometric-tileset.json";
 import { MapTile } from "../classes/map-tile";
-import type { MapLayer } from "../types/tiled";
-import { tilesetToSpritesheet } from "./tileset-to-spritesheet";
+import type { Map, MapLayer, Tileset } from "../types/tiled";
+import { tilesetToTextures } from "./tileset-to-textures";
 
-export async function parseTilemap() {
+export async function parseTilemap({
+  map,
+  tileset,
+}: {
+  map: Map;
+  tileset: Tileset;
+}) {
   const layers = map.layers.filter((x) => x.type === "tilelayer") as MapLayer[];
 
-  const spritesheetData = await tilesetToSpritesheet({ tileset });
-  const sheetTexture = await Assets.load({
-    src: "sheets/isometric-tileset.png",
-    data: { scaleMode: "nearest" },
-  });
-  const sheet = new Spritesheet(sheetTexture, spritesheetData);
-  const textures = await sheet.parse();
+  const textures = await tilesetToTextures({ tileset });
 
   let tiles: MapTile[] = [];
 
   // Iterate through each layer
   for (let i = 0; i < layers.length; i++) {
     const layer = layers[i];
+    if (!layer.data || !layer.width || !layer.height) continue;
 
     // Iterate through each tile in the layer
     for (let j = 0; j < layer.data.length; j++) {
