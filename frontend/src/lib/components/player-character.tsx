@@ -50,7 +50,7 @@ export function PlayerCharacter() {
     // Do nothing if distance is very small
     if (distance <= 1) {
       const roundedPosition = { x: round(x), y: round(y) };
-      console.log("Arrived at destination:", roundedPosition);
+      console.log("Arrived at destination:", roundedPosition, tilePosition);
       update({
         desiredPosition: undefined,
         position: roundedPosition,

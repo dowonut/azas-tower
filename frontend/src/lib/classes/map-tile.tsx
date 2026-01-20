@@ -36,6 +36,43 @@ export class MapTile implements MapTileOptions {
     return this.properties?.find((p) => p.name === "walkable")?.value ?? false;
   }
 
+  /** Check if the tile has another tile directly above it */
+  hasTileAbove({ tiles }: { tiles: MapTile[] }) {
+    const tilesAboveLayer = tiles.filter(
+      (tile) => tile.layer === this.layer + 1
+    );
+    const tileAboveCurrent = tilesAboveLayer.find(
+      (tile) =>
+        tile.tilePosition.x === this.tilePosition.x - 1 &&
+        tile.tilePosition.y === this.tilePosition.y - 1
+    );
+    return !!tileAboveCurrent;
+  }
+
+  /** Get the upmost tile above the current one */
+  getTileAbove({ tiles }: { tiles: MapTile[] }) {
+    let highestTile: MapTile | undefined;
+    let tileAbove: MapTile | undefined;
+
+    for (let i = 0; tileAbove === undefined && i < 20; i++) {
+      const layer = i + this.layer;
+      const tile = tiles.find(
+        (tile) =>
+          tile.layer === layer &&
+          tile.tilePosition.x === this.tilePosition.x - i &&
+          tile.tilePosition.y === this.tilePosition.y - i &&
+          tile.isWalkable
+      );
+      if (!!tile) {
+        highestTile = tile;
+      } else {
+        tileAbove = highestTile;
+      }
+    }
+
+    return tileAbove;
+  }
+
   /** Is the tile behind the player? */
   isBehindPlayer({
     playerPosition,

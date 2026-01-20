@@ -55,7 +55,7 @@ export function BackgroundSprite({
       <pixiContainer
         ref={ref}
         // tint={overlay ? undefined : "red"}
-        alpha={overlay ? 0.5 : 1}
+        alpha={overlay ? 0.8 : 1}
         eventMode="static"
         scale={scale}
         {...props}

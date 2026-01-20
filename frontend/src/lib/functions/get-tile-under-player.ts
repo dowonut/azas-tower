@@ -11,17 +11,27 @@ export function getTileUnderPlayer({
   playerTilePosition: PointData;
   playerLayer: number;
 }) {
-  const tileUnderPlayer = tiles
+  const tilesAtSameTilePosition = tiles.filter(
+    (tile) =>
+      tile.tilePosition.x === playerTilePosition.x &&
+      tile.tilePosition.y === playerTilePosition.y
+  );
+  const tileUnderPlayer = tilesAtSameTilePosition
     .filter(
       (tile) =>
-        tile.tilePosition.x === playerTilePosition.x &&
-        tile.tilePosition.y === playerTilePosition.y &&
+        // Allow tiles marked as walkable
         tile.isWalkable &&
+        // Only tiles that are not more than 1 layer above the player
         tile.layer - playerLayer <= 1
     )
     .sort((a, b) => b.layer - a.layer)[0];
 
   if (!tileUnderPlayer) return;
+
+  if (tileUnderPlayer.hasTileAbove({ tiles })) {
+    const realTileUnderPlayer = tileUnderPlayer.getTileAbove({ tiles });
+    return realTileUnderPlayer;
+  }
 
   return tileUnderPlayer;
 }

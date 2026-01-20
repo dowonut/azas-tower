@@ -2,6 +2,7 @@ import { Sprite, type FederatedPointerEvent } from "pixi.js";
 import { useRef } from "react";
 import { usePlayerCharacterStore } from "../stores/player-character-store";
 import { BackgroundSprite } from "./background-sprite";
+import { toTilePosition } from "../functions/to-tile-position";
 
 export function Background({ overlay = false }: { overlay?: boolean }) {
   const SCALE = 3;
@@ -21,7 +22,11 @@ export function Background({ overlay = false }: { overlay?: boolean }) {
       y: Math.round(localPoint.y * SCALE),
     };
 
-    console.log("Moving to:", desiredPosition);
+    console.log(
+      "Moving to:",
+      desiredPosition,
+      toTilePosition(desiredPosition, { scale: SCALE })
+    );
 
     update({
       desiredPosition,

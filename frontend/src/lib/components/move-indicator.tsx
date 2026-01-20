@@ -33,6 +33,7 @@ export function MoveIndicator() {
         anchor={{ x: 0.5, y: 0.75 }}
         alpha={0.8}
         visible={!!desiredPosition}
+        eventMode="none"
         x={desiredPosition?.x}
         y={desiredPosition?.y}
       />
