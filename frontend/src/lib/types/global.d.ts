@@ -1,10 +1,13 @@
 import { type Viewport } from "pixi-viewport";
 import { type PixiReactElementProps } from "@pixi/react";
 import type { CustomViewport } from "../classes/custom-viewport";
+import type { PerfectSprite } from "../classes/perfect-sprite";
+import type { WorldTile } from "../classes/world-tile";
 
-declare module "@pixi/react" {
-  interface PixiElements {
-    pixiCustomViewport: PixiReactElementProps<typeof CustomViewport>;
+declare module "pixi.js" {
+  interface TextureSource {
+    /** Hitmap representing opaque pixels */
+    hitmap: Uint32Array | undefined;
   }
 }
 

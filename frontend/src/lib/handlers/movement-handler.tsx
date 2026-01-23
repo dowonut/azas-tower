@@ -1,5 +1,4 @@
 import { useHotkeys } from "react-hotkeys-hook";
-import { usePlayerCharacterStore } from "../stores/player-character-store";
 import type { Direction, Entries } from "../types";
 
 const movementKeys: Record<Direction, string[]> = {
@@ -10,13 +9,11 @@ const movementKeys: Record<Direction, string[]> = {
 };
 
 export function MovementHandler() {
-  const move = usePlayerCharacterStore((state) => state.move);
-
   for (const [direction, keys] of Object.entries(movementKeys) as Entries<
     typeof movementKeys
   >) {
     for (const key of keys) {
-      useHotkeys(key, () => move({ direction, distance: 10 }));
+      useHotkeys(key, () => console.log(direction));
     }
   }
 

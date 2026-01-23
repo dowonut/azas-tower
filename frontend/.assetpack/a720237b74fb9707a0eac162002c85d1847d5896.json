@@ -1,0 +1,394 @@
+{
+    "assets": {
+        "/home/linus/projects/azas-tower/frontend/raw-assets": {
+            "isFolder": true,
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769166701798,
+                "duration": 0.4661500000001979,
+                "success": true
+            }
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/fonts": {
+            "isFolder": true,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769166701799,
+                "duration": 0.3956099999995786,
+                "success": true
+            }
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/m5x7{family=m5x7}.ttf": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts",
+            "metaData": {
+                "family": "m5x7"
+            },
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769166701799,
+                "duration": 0.3721700000023702,
+                "success": true
+            },
+            "hash": "hGZQhA"
+        },
+        ".assetpack/cache-buster/fonts/m5x7-hGZQhA{family=m5x7}.ttf": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/m5x7{family=m5x7}.ttf",
+            "metaData": {
+                "family": "m5x7"
+            },
+            "inheritedMetaData": {
+                "family": "m5x7"
+            },
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/fonts/m5x7-hGZQhA.ttf": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fonts/m5x7-hGZQhA{family=m5x7}.ttf",
+            "metaData": {},
+            "inheritedMetaData": {
+                "family": "m5x7"
+            },
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/monogram-bitmap.json": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769165462789,
+                "duration": 4.764816999901086,
+                "success": true
+            },
+            "hash": "ohGHBw"
+        },
+        ".assetpack/json/fonts/monogram-bitmap.json": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/monogram-bitmap.json",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/fonts/monogram-bitmap-yGWsVQ.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/json/fonts/monogram-bitmap.json",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/fonts/monogram-bitmap-yGWsVQ.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fonts/monogram-bitmap-yGWsVQ.json",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/monogram-bitmap.png": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769165462793,
+                "duration": 2.1512489998713136,
+                "success": true
+            },
+            "hash": "pjzehA"
+        },
+        ".assetpack/mipmap/fonts/monogram-bitmap.png": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/monogram-bitmap.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/fonts/monogram-bitmap-j0VhZQ.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/fonts/monogram-bitmap.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/fonts/monogram-bitmap-j0VhZQ.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fonts/monogram-bitmap-j0VhZQ.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/monogram-extended{family=monogram-extended}.ttf": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts",
+            "metaData": {
+                "family": "monogram-extended"
+            },
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769166694817,
+                "duration": 0.3348009999972419,
+                "success": true
+            },
+            "hash": "JTjf3w"
+        },
+        ".assetpack/cache-buster/fonts/monogram-extended-JTjf3w{family=monogram-extended}.ttf": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/monogram-extended{family=monogram-extended}.ttf",
+            "metaData": {
+                "family": "monogram-extended"
+            },
+            "inheritedMetaData": {
+                "family": "monogram-extended"
+            },
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/fonts/monogram-extended-JTjf3w.ttf": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fonts/monogram-extended-JTjf3w{family=monogram-extended}.ttf",
+            "metaData": {},
+            "inheritedMetaData": {
+                "family": "monogram-extended"
+            },
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/monogram{family=monogram}.ttf": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts",
+            "metaData": {
+                "family": "monogram"
+            },
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769166674561,
+                "duration": 0.22408999999970547,
+                "success": true
+            },
+            "hash": "vtb12g"
+        },
+        ".assetpack/cache-buster/fonts/monogram-vtb12g{family=monogram}.ttf": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/fonts/monogram{family=monogram}.ttf",
+            "metaData": {
+                "family": "monogram"
+            },
+            "inheritedMetaData": {
+                "family": "monogram"
+            },
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/fonts/monogram-vtb12g.ttf": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fonts/monogram-vtb12g{family=monogram}.ttf",
+            "metaData": {},
+            "inheritedMetaData": {
+                "family": "monogram"
+            },
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/icons": {
+            "isFolder": true,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769164406711,
+                "duration": 1.146111000000019,
+                "success": true
+            }
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/icons/tower-icon-160.png": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/icons",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769164406711,
+                "duration": 3.505792999999926,
+                "success": true
+            },
+            "hash": "gjdsmg"
+        },
+        ".assetpack/mipmap/icons/tower-icon-160.png": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/icons/tower-icon-160.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/icons/tower-icon-160-prRb8Q.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/icons/tower-icon-160.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/icons/tower-icon-160-prRb8Q.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/icons/tower-icon-160-prRb8Q.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/icons/tower-icon-32.png": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/icons",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769164406712,
+                "duration": 2.8977220000000443,
+                "success": true
+            },
+            "hash": "yPW-qA"
+        },
+        ".assetpack/mipmap/icons/tower-icon-32.png": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/icons/tower-icon-32.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/icons/tower-icon-32-77kkkw.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/icons/tower-icon-32.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/icons/tower-icon-32-77kkkw.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/icons/tower-icon-32-77kkkw.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/icons/tower-icon-320.png": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/icons",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769164406712,
+                "duration": 3.250752000000034,
+                "success": true
+            },
+            "hash": "NmtGtg"
+        },
+        ".assetpack/mipmap/icons/tower-icon-320.png": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/icons/tower-icon-320.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/icons/tower-icon-320-Km8DsQ.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/icons/tower-icon-320.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/icons/tower-icon-320-Km8DsQ.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/icons/tower-icon-320-Km8DsQ.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/sheets": {
+            "isFolder": true,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769164406712,
+                "duration": 0.11784000000000106,
+                "success": true
+            }
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/sheets/animated-tileset.png": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/sheets",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769164406713,
+                "duration": 2.9419520000000148,
+                "success": true
+            },
+            "hash": "RNogQA"
+        },
+        ".assetpack/mipmap/sheets/animated-tileset.png": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/sheets/animated-tileset.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/sheets/animated-tileset-I4EAvQ.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/sheets/animated-tileset.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/sheets/animated-tileset-I4EAvQ.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/sheets/animated-tileset-I4EAvQ.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/sheets/background-tileset.png": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/sheets",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769164406713,
+                "duration": 3.278541999999902,
+                "success": true
+            },
+            "hash": "3c2SOQ"
+        },
+        ".assetpack/mipmap/sheets/background-tileset.png": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/sheets/background-tileset.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/sheets/background-tileset-teuOGQ.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/sheets/background-tileset.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/sheets/background-tileset-teuOGQ.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/sheets/background-tileset-teuOGQ.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        }
+    }
+}

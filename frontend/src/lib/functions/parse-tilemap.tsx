@@ -1,7 +1,10 @@
-import { MapTile } from "../classes/map-tile";
+import { WorldTile } from "../classes/world-tile";
 import type { Map, MapLayer, Tileset } from "../types/tiled";
-import { tilesetToTextures } from "./tileset-to-textures";
+import { parseTileset } from "./parse-tileset";
 
+/**
+ * Parse a tilemap and return an array of WorldTiles
+ */
 export async function parseTilemap({
   map,
   tileset,
@@ -11,9 +14,9 @@ export async function parseTilemap({
 }) {
   const layers = map.layers.filter((x) => x.type === "tilelayer") as MapLayer[];
 
-  const textures = await tilesetToTextures({ tileset });
+  const { textures } = await parseTileset({ tileset });
 
-  let tiles: MapTile[] = [];
+  let tiles: WorldTile[] = [];
 
   // Iterate through each layer
   for (let i = 0; i < layers.length; i++) {
@@ -36,17 +39,17 @@ export async function parseTilemap({
       const x = ((column - row) * tileset.tilewidth) / 2;
       const y = (column + row) * (tileset.tileheight / 4);
 
-      const mapTile = new MapTile({
+      const worldTile = new WorldTile({
         texture: textures[id],
         position: { x, y },
         tilePosition: { x: column, y: row },
         spriteId: id,
-        id: j,
+        tileId: j,
         layer: i,
         properties: tile?.properties,
       });
 
-      tiles.push(mapTile);
+      tiles.push(worldTile);
     }
   }
 

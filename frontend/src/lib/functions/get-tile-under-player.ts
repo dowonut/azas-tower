@@ -1,37 +1,34 @@
-import type { PointData } from "pixi.js";
-import type { MapTile } from "../classes/map-tile";
+import type { Player } from "../classes/player";
+import type { World } from "../classes/world";
+import type { WorldTile } from "../classes/world-tile";
+import { getTilesAt } from "./get-tiles-at";
 
 /** Get the tile the player is currently standing on */
 export function getTileUnderPlayer({
-  tiles,
-  playerTilePosition,
-  playerLayer,
+  world,
+  player: { position, tilePosition, layer },
 }: {
-  tiles: MapTile[];
-  playerTilePosition: PointData;
-  playerLayer: number;
-}) {
-  const tilesAtSameTilePosition = tiles.filter(
+  world: World;
+  player: Player;
+}): WorldTile | null {
+  const globalPosition = world.toGlobal({ x: position.x, y: position.y });
+
+  const tilesUnderPlayer = getTilesAt({
+    point: globalPosition,
+    tilePosition,
+    tiles: world.tiles,
+  });
+
+  if (!tilesUnderPlayer) return null;
+
+  const validTiles = tilesUnderPlayer.filter(
     (tile) =>
-      tile.tilePosition.x === playerTilePosition.x &&
-      tile.tilePosition.y === playerTilePosition.y
+      tile.isWalkable &&
+      // !tile.hasTileAbove({ tiles: world.tiles }) &&
+      tile.layer - layer <= 1,
   );
-  const tileUnderPlayer = tilesAtSameTilePosition
-    .filter(
-      (tile) =>
-        // Allow tiles marked as walkable
-        tile.isWalkable &&
-        // Only tiles that are not more than 1 layer above the player
-        tile.layer - playerLayer <= 1
-    )
-    .sort((a, b) => b.layer - a.layer)[0];
 
-  if (!tileUnderPlayer) return;
+  if (validTiles.length < 1) return null;
 
-  if (tileUnderPlayer.hasTileAbove({ tiles })) {
-    const realTileUnderPlayer = tileUnderPlayer.getTileAbove({ tiles });
-    return realTileUnderPlayer;
-  }
-
-  return tileUnderPlayer;
+  return validTiles[0];
 }
