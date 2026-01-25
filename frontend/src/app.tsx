@@ -8,7 +8,7 @@
 //   Text,
 // } from "pixi.js";
 
-import { useCallback, useRef, useState } from "react";
+import { useRef } from "react";
 
 // import { PlayerCharacter } from "./lib/components/player-character";
 // import { CustomViewport } from "./lib/classes/custom-viewport";

@@ -96,6 +96,7 @@ export type MapLayer = {
   y: number;
   draworder?: string;
   objects?: Object[];
+  layers?: MapLayer[];
 };
 
 export type WorldTileset = {

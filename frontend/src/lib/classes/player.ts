@@ -15,7 +15,7 @@ export class Player extends Entity {
       },
       eventMode: "static",
       cursor: "pointer",
-      position: { x: 16, y: 16 },
+      position: { x: 16, y: 16 * 4 },
     };
 
     super({

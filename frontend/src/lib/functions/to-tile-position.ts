@@ -6,7 +6,12 @@ export function toTilePosition(
   {
     tileWidth = 32,
     tileHeight = 32,
-  }: { tileWidth?: number; tileHeight?: number } = {},
+    offset,
+  }: {
+    tileWidth?: number;
+    tileHeight?: number;
+    offset?: { x?: number; y?: number };
+  } = {},
 ): PointData {
   // Inverse of isometric projection formulas
   // Given: x = ((column - row) * tilewidth) / 2
@@ -14,8 +19,8 @@ export function toTilePosition(
   // Solving for column and row:
   const halfWidth = tileWidth / 2;
   const quarterHeight = tileHeight / 4;
-  const xFactor = position.x / halfWidth;
-  const yFactor = position.y / quarterHeight;
+  const xFactor = (position.x + (offset?.x || 0)) / halfWidth;
+  const yFactor = (position.y + (offset?.y || 0)) / quarterHeight;
 
   return {
     x: Math.round((xFactor + yFactor) / 2 - 1),

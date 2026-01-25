@@ -29,11 +29,12 @@ export function handlePlayerMovement({
   });
 
   if (!!tileUnderPlayer) {
-    const newLayer = tileUnderPlayer.layer;
-    const depthLayer = tileUnderPlayer.depthLayer;
-    player.layer = newLayer;
-    player.depthLayer = depthLayer;
     player.tile = tileUnderPlayer;
+
+    if (!tileUnderPlayer.hasTileAbove({ tiles: world.tiles })) {
+      const newLayer = tileUnderPlayer.layer;
+      player.layer = newLayer;
+    }
   }
 
   // Calculate direction towards desired position

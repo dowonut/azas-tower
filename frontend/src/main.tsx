@@ -2,7 +2,6 @@ import {
   Application,
   Assets,
   Container,
-  RenderLayer,
   TextStyle,
   TextureStyle,
 } from "pixi.js";
@@ -80,7 +79,9 @@ createRoot(document.getElementById("root")!).render(
   stage.addChild(viewport);
 
   // Create world container
-  const worldContainer = new Container({ scale: 3 });
+  const worldContainer = new Container({
+    scale: 3,
+  });
   viewport.addChild(worldContainer);
 
   // Create world
@@ -90,24 +91,20 @@ createRoot(document.getElementById("root")!).render(
   const player = new Player({ world });
   await player.init();
 
+  const player2 = new Player({ world, x: 64, y: 16 * 6 });
+  await player2.init();
+
   // Initialize world after player
   await world.init({ player });
 
   // Creat move indicator
   const moveIndicator = await MoveIndicator.init();
 
-  // Create render layers
-  const renderLayers = {
-    behindPlayer: new RenderLayer(),
-    abovePlayer: new RenderLayer(),
-  } as const;
-
   // Add children to container
   worldContainer.addChild(world);
-  worldContainer.addChild(renderLayers.behindPlayer);
   worldContainer.addChild(moveIndicator);
   worldContainer.addChild(player);
-  worldContainer.addChild(renderLayers.abovePlayer);
+  worldContainer.addChild(player2);
 
   // Create debug overlay
   const debugOverlay = new DebugOverlay({ ticker: app.ticker });
@@ -116,7 +113,6 @@ createRoot(document.getElementById("root")!).render(
   // Add global tickers
   app.ticker.add((ticker) => {
     // Attach tickers
-    world.ticker({ player });
     moveIndicator.ticker({ player });
 
     // Handle player movement

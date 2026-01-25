@@ -122,6 +122,7 @@ export class PerfectSprite extends Sprite {
       }
     }
 
+    console.log(`Finished generating hitmap for texture source`);
     textureSource.hitmap = hitmap;
 
     return true;

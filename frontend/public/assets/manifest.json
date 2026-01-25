@@ -126,7 +126,19 @@
             "background-tileset.png"
           ],
           "src": [
-            "sheets/background-tileset-teuOGQ.png"
+            "sheets/background-tileset-cyyI1Q.png"
+          ],
+          "data": {
+            "tags": {}
+          }
+        },
+        {
+          "alias": [
+            "sheets/walkable-tileset.png",
+            "walkable-tileset.png"
+          ],
+          "src": [
+            "sheets/walkable-tileset-6gsLpA.png"
           ],
           "data": {
             "tags": {}

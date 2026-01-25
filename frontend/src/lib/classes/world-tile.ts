@@ -1,6 +1,5 @@
 import {
   Container,
-  Text,
   type PointData,
   type SpriteOptions,
   type Texture,
@@ -16,12 +15,14 @@ export type WorldTileOptions = {
   spriteId: number;
   position: PointData;
   texture: Texture;
+  walkableTexture: Texture;
   properties?: TileProperties[];
   highlighted?: boolean;
 };
 
 export class WorldTile extends Container {
   sprite: PerfectSprite;
+  walkable!: PerfectSprite;
   tilePosition!: PointData;
   layer!: number;
   tileId!: number;
@@ -33,6 +34,7 @@ export class WorldTile extends Container {
     sprite: spriteOptions,
     position,
     texture,
+    walkableTexture,
     ...options
   }: WorldTileOptions & { sprite?: SpriteOptions | Texture }) {
     super({ eventMode: "static", position });
@@ -42,6 +44,15 @@ export class WorldTile extends Container {
     this.sprite = sprite;
     this.addChild(sprite);
 
+    const walkableSprite = new PerfectSprite({
+      texture: walkableTexture,
+      alpha: 0.5,
+      visible: false,
+      ...spriteOptions,
+    });
+    this.walkable = walkableSprite;
+    this.addChild(walkableSprite);
+
     this.onpointerover = () => {
       sprite.tint = "red";
     };
@@ -50,17 +61,17 @@ export class WorldTile extends Container {
       sprite.tint = 0xffffff;
     };
 
-    const text = new Text({
-      text: `${this.layer}:${this.depthLayer}`,
-      // text: `${this.tilePosition.x}, ${this.tilePosition.y}`,
-      scale: 0.2,
-      anchor: 0.5,
-      x: 16,
-      y: 8,
-      alpha: 0.5,
-      eventMode: "none",
-    });
-    this.addChild(text);
+    // const text = new Text({
+    //   text: `${this.layer}:${this.depthLayer}`,
+    //   // text: `${this.tilePosition.x}, ${this.tilePosition.y}`,
+    //   scale: 0.2,
+    //   anchor: 0.5,
+    //   x: 16,
+    //   y: 8,
+    //   alpha: 0.5,
+    //   eventMode: "none",
+    // });
+    // this.addChild(text);
   }
 
   get realY() {

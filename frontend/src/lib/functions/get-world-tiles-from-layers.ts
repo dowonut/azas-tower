@@ -1,21 +1,18 @@
+import type { Texture } from "pixi.js";
 import { WorldTile } from "../classes/world-tile";
-import type { Map, MapLayer, Tileset } from "../types/tiled";
-import { parseTileset } from "./parse-tileset";
+import type { MapLayer, Tileset } from "../types/tiled";
 
-/**
- * Parse a tilemap and return an array of WorldTiles
- */
-export async function parseTilemap({
-  map,
+export function getWorldTilesFromLayers({
+  layers,
   tileset,
+  textures,
+  walkableTextures,
 }: {
-  map: Map;
+  layers: MapLayer[];
   tileset: Tileset;
+  textures: Record<string | number, Texture>;
+  walkableTextures: Record<string | number, Texture>;
 }) {
-  const layers = map.layers.filter((x) => x.type === "tilelayer") as MapLayer[];
-
-  const { textures } = await parseTileset({ tileset });
-
   let tiles: WorldTile[] = [];
 
   // Iterate through each layer
@@ -41,6 +38,7 @@ export async function parseTilemap({
 
       const worldTile = new WorldTile({
         texture: textures[id],
+        walkableTexture: walkableTextures[id],
         position: { x, y },
         tilePosition: { x: column, y: row },
         spriteId: id,

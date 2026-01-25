@@ -6,8 +6,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1769166701798,
-                "duration": 0.4661500000001979,
+                "date": 1769360242834,
+                "duration": 0.27749199979007244,
                 "success": true
             }
         },
@@ -317,8 +317,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1769164406712,
-                "duration": 0.11784000000000106,
+                "date": 1769360242834,
+                "duration": 0.24833300011232495,
                 "success": true
             }
         },
@@ -363,11 +363,11 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1769164406713,
-                "duration": 3.278541999999902,
+                "date": 1769359219679,
+                "duration": 2.95288800005801,
                 "success": true
             },
-            "hash": "3c2SOQ"
+            "hash": "QnhDGw"
         },
         ".assetpack/mipmap/sheets/background-tileset.png": {
             "isFolder": false,
@@ -376,16 +376,50 @@
             "inheritedMetaData": {},
             "transformData": {}
         },
-        ".assetpack/cache-buster/sheets/background-tileset-teuOGQ.png": {
+        ".assetpack/cache-buster/sheets/background-tileset-cyyI1Q.png": {
             "isFolder": false,
             "transformParent": ".assetpack/mipmap/sheets/background-tileset.png",
             "metaData": {},
             "inheritedMetaData": {},
             "transformData": {}
         },
-        "/home/linus/projects/azas-tower/frontend/public/assets/sheets/background-tileset-teuOGQ.png": {
+        "/home/linus/projects/azas-tower/frontend/public/assets/sheets/background-tileset-cyyI1Q.png": {
             "isFolder": false,
-            "transformParent": ".assetpack/cache-buster/sheets/background-tileset-teuOGQ.png",
+            "transformParent": ".assetpack/cache-buster/sheets/background-tileset-cyyI1Q.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/sheets/walkable-tileset.png": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/sheets",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769360242834,
+                "duration": 1.7493379996158183,
+                "success": true
+            },
+            "hash": "W1fxgw"
+        },
+        ".assetpack/mipmap/sheets/walkable-tileset.png": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/sheets/walkable-tileset.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/sheets/walkable-tileset-6gsLpA.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/sheets/walkable-tileset.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/sheets/walkable-tileset-6gsLpA.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/sheets/walkable-tileset-6gsLpA.png",
             "metaData": {},
             "inheritedMetaData": {},
             "transformData": {}
