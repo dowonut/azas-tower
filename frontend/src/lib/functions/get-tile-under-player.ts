@@ -1,27 +1,34 @@
-import type { PointData } from "pixi.js";
-import type { MapTile } from "../classes/map-tile";
+import type { Player } from "../classes/player";
+import type { World } from "../classes/world";
+import type { WorldTile } from "../classes/world-tile";
+import { getTilesAt } from "./get-tiles-at";
 
 /** Get the tile the player is currently standing on */
 export function getTileUnderPlayer({
-  tiles,
-  playerTilePosition,
-  playerLayer,
+  world,
+  player: { position, tilePosition, layer },
 }: {
-  tiles: MapTile[];
-  playerTilePosition: PointData;
-  playerLayer: number;
-}) {
-  const tileUnderPlayer = tiles
-    .filter(
-      (tile) =>
-        tile.tilePosition.x === playerTilePosition.x &&
-        tile.tilePosition.y === playerTilePosition.y &&
-        tile.isWalkable &&
-        tile.layer - playerLayer <= 1
-    )
-    .sort((a, b) => b.layer - a.layer)[0];
+  world: World;
+  player: Player;
+}): WorldTile | null {
+  const globalPosition = world.toGlobal({ x: position.x, y: position.y });
 
-  if (!tileUnderPlayer) return;
+  const tilesUnderPlayer = getTilesAt({
+    point: globalPosition,
+    tilePosition,
+    tiles: world.tiles,
+  });
 
-  return tileUnderPlayer;
+  if (!tilesUnderPlayer) return null;
+
+  const validTiles = tilesUnderPlayer.filter(
+    (tile) =>
+      tile.isWalkable &&
+      // !tile.hasTileAbove({ tiles: world.tiles }) &&
+      tile.layer - layer <= 1,
+  );
+
+  if (validTiles.length < 1) return null;
+
+  return validTiles[0];
 }

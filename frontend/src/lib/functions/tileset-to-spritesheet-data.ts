@@ -12,6 +12,7 @@ export async function tilesetToSpritesheetData({
   const { columns, tilewidth, tileheight } = tileset;
 
   let frames: SpritesheetData["frames"] = {};
+  let animations: SpritesheetData["animations"] = {};
   for (let i = 0; i < tileset.tilecount; i++) {
     frames[i + 1] = {
       frame: {
@@ -21,10 +22,16 @@ export async function tilesetToSpritesheetData({
         h: tileheight,
       },
     };
+
+    const animation = tileset?.tiles?.find((x) => x.id === i)?.animation;
+    if (!!animation) {
+      animations[i + 1] = animation.map((x) => `${x.tileid + 1}`);
+    }
   }
 
   const spritesheetData: SpritesheetData = {
     frames,
+    animations,
     meta: {
       scale: "1",
     },

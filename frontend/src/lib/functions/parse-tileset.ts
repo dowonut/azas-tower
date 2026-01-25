@@ -3,15 +3,14 @@ import { tilesetToSpritesheetData } from "./tileset-to-spritesheet-data";
 import type { Tileset } from "../types/tiled";
 
 /**
- * Convert a Tiled tileset to a texture array
+ * Convert a Tiled tileset to a parsed Spritesheet
  */
-export async function tilesetToTextures({ tileset }: { tileset: Tileset }) {
+export async function parseTileset({ tileset }: { tileset: Tileset }) {
   const spritesheetData = await tilesetToSpritesheetData({ tileset });
   const sheetTexture = await Assets.load({
-    src: `sheets/${tileset.name}.png`,
-    data: { scaleMode: "nearest" },
+    alias: `sheets/${tileset.name}.png`,
   });
   const sheet = new Spritesheet(sheetTexture, spritesheetData);
-  const textures = await sheet.parse();
-  return textures;
+  await sheet.parse();
+  return sheet;
 }

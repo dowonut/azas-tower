@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@pixi/react": "^8.0.5",
     "parse-tmx": "^2.18.2",
     "pixi-filters": "^6.1.5",
     "pixi-viewport": "^6.0.3",
@@ -21,6 +20,7 @@
     "zustand": "^5.0.10"
   },
   "devDependencies": {
+    "@assetpack/core": "^1.7.0",
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",

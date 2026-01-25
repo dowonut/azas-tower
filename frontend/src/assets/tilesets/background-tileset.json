@@ -1,11 +1,11 @@
 { "columns":10,
  "grid":
     {
-     "height":32,
+     "height":16,
      "orientation":"isometric",
      "width":32
     },
- "image":"..\/..\/..\/..\/..\/..\/documents\/aseprite\/background-tileset.png",
+ "image":"..\/..\/..\/raw-assets\/sheets\/background-tileset.png",
  "imageheight":320,
  "imagewidth":320,
  "margin":0,
@@ -453,7 +453,7 @@
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":false
+                 "value":true
                 }]
         }, 
         {
@@ -462,7 +462,7 @@
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":false
+                 "value":true
                 }]
         }, 
         {
@@ -471,7 +471,7 @@
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":false
+                 "value":true
                 }]
         }, 
         {
@@ -480,7 +480,7 @@
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":false
+                 "value":true
                 }]
         }, 
         {
@@ -489,7 +489,7 @@
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":false
+                 "value":true
                 }]
         }, 
         {
@@ -498,7 +498,7 @@
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":false
+                 "value":true
                 }]
         }, 
         {
@@ -705,7 +705,7 @@
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":false
+                 "value":true
                 }]
         }, 
         {
@@ -714,7 +714,7 @@
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":false
+                 "value":true
                 }]
         }, 
         {
@@ -1061,5 +1061,72 @@
         }],
  "tilewidth":32,
  "type":"tileset",
- "version":"1.10"
+ "version":"1.10",
+ "wangsets":[
+        {
+         "colors":[
+                {
+                 "color":"#00ffff",
+                 "name":"Water",
+                 "probability":1,
+                 "tile":50
+                }],
+         "name":"Corner Set 1",
+         "tile":30,
+         "type":"corner",
+         "wangtiles":[
+                {
+                 "tileid":50,
+                 "wangid":[0, 1, 0, 1, 0, 1, 0, 1]
+                }, 
+                {
+                 "tileid":51,
+                 "wangid":[0, 0, 0, 1, 0, 0, 0, 0]
+                }, 
+                {
+                 "tileid":52,
+                 "wangid":[0, 0, 0, 1, 0, 1, 0, 0]
+                }, 
+                {
+                 "tileid":53,
+                 "wangid":[0, 1, 0, 1, 0, 0, 0, 0]
+                }, 
+                {
+                 "tileid":54,
+                 "wangid":[0, 1, 0, 1, 0, 1, 0, 0]
+                }]
+        }, 
+        {
+         "colors":[
+                {
+                 "color":"#00ffff",
+                 "name":"",
+                 "probability":1,
+                 "tile":50
+                }],
+         "name":"Edge Set 1",
+         "tile":50,
+         "type":"edge",
+         "wangtiles":[
+                {
+                 "tileid":50,
+                 "wangid":[1, 0, 1, 0, 1, 0, 1, 0]
+                }, 
+                {
+                 "tileid":51,
+                 "wangid":[0, 0, 1, 0, 1, 0, 0, 0]
+                }, 
+                {
+                 "tileid":52,
+                 "wangid":[0, 0, 0, 0, 1, 0, 0, 0]
+                }, 
+                {
+                 "tileid":53,
+                 "wangid":[0, 0, 1, 0, 0, 0, 0, 0]
+                }, 
+                {
+                 "tileid":54,
+                 "wangid":[1, 0, 0, 0, 0, 0, 1, 0]
+                }]
+        }]
 }

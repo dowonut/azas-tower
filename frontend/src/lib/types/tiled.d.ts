@@ -17,8 +17,14 @@ export type Tileset = {
 
 export type Tile = {
   id: number;
+  animation?: TileAnimation[];
   objectgroup?: ObjectGroup;
   properties?: TileProperties[];
+};
+
+export type TileAnimation = {
+  duration: number;
+  tileid: number;
 };
 
 export type ObjectGroup = {
@@ -70,7 +76,7 @@ export type Map = {
   renderorder: string;
   tiledversion: string;
   tileheight: number;
-  tilesets: MapTileset[];
+  tilesets: WorldTileset[];
   tilewidth: number;
   type: string;
   version: string;
@@ -90,9 +96,10 @@ export type MapLayer = {
   y: number;
   draworder?: string;
   objects?: Object[];
+  layers?: MapLayer[];
 };
 
-export type MapTileset = {
+export type WorldTileset = {
   firstgid: number;
   source: string;
 };

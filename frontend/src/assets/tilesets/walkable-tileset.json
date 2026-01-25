@@ -1,0 +1,20 @@
+{ "columns":10,
+ "grid":
+    {
+     "height":16,
+     "orientation":"isometric",
+     "width":32
+    },
+ "image":"..\/..\/..\/raw-assets\/sheets\/walkable-tileset.png",
+ "imageheight":320,
+ "imagewidth":320,
+ "margin":0,
+ "name":"walkable-tileset",
+ "spacing":0,
+ "tilecount":100,
+ "tiledversion":"1.11.2",
+ "tileheight":32,
+ "tilewidth":32,
+ "type":"tileset",
+ "version":"1.10"
+}
