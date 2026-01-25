@@ -25,25 +25,32 @@ export class World extends Container {
   }[][] = [];
   highestLayer: number = 0;
   highestDepthLayer: number = 0;
+  abovePlayer: Container;
+  behindPlayer: Container;
   // walkable!: Container;
 
   constructor(
     options: ContainerOptions = { eventMode: "static", sortableChildren: true },
   ) {
     super(options);
+
+    const alphaFilter = new AlphaFilter({ alpha: 0.8 });
+    this.abovePlayer = new Container({
+      filters: alphaFilter,
+      label: "abovePlayer",
+    });
+    this.behindPlayer = new Container({ label: "behindPlayer" });
   }
 
   /** Initialize the world by loading and rendering tiles. */
-  async init({ player }: { player: Player }) {
-    this.player = player;
+  async init({ player: _player }: { player: Player }) {
+    this.player = _player;
 
     const { tiles } = await parseTilemap({
       map,
       tileset,
     });
     this.tiles = tiles;
-
-    // this.addChild(...tiles);
 
     // Calculate total layers
     const highestLayer = [...tiles].sort((a, b) => b.layer - a.layer)[0].layer;
@@ -56,21 +63,18 @@ export class World extends Container {
     this.highestDepthLayer = highestDepthLayer;
 
     // Handle render layers
-    for (let i = 0; i <= highestDepthLayer; i++) {
-      for (let j = 0; j <= highestLayer; j++) {
+    for (let depthLayer = 0; depthLayer <= highestDepthLayer; depthLayer++) {
+      for (let layer = 0; layer <= highestLayer; layer++) {
         const tilesAtLayer = tiles.filter(
-          (x) => x.layer === j && x.depthLayer === i,
+          (x) => x.layer === layer && x.depthLayer === depthLayer,
         );
 
         if (tilesAtLayer.length < 1) continue;
 
-        this.addChild(...tilesAtLayer);
-
         const container = new Container({
-          // tint: { h: (360 / highestDepthLayer) * i, s: 100, l: 50 },
+          // tint: { h: (360 / highestDepthLayer) * depthLayer, s: 100, l: 50 },
         });
-        this.addChild(container);
-        if (i === 21) this.addChild(container);
+        this.behindPlayer.addChild(container);
         container.addChild(...tilesAtLayer);
 
         // Add render layer
@@ -78,8 +82,8 @@ export class World extends Container {
         container.addChild(renderLayer);
 
         // Update internal state
-        if (!this.renderLayers[i]) this.renderLayers[i] = [];
-        this.renderLayers[i][j] = {
+        if (!this.renderLayers[depthLayer]) this.renderLayers[depthLayer] = [];
+        this.renderLayers[depthLayer][layer] = {
           tiles: tilesAtLayer,
           renderLayer,
           container,
@@ -87,16 +91,9 @@ export class World extends Container {
       }
     }
 
-    // Handle walkable tiles
-    // const walkableContainer = new Container({
-    //   eventMode: "static",
-    //   alpha: 0.5,
-    // });
-    // this.walkable = walkableContainer;
-    // this.addChild(this.walkable);
-    // this.walkable.addChild(...walkableTiles);
+    this.addChild(this.behindPlayer);
+    this.addChild(this.abovePlayer);
 
-    const alphaFilter = new AlphaFilter({ alpha: 0.5 });
     const worldTicker = new Ticker();
     worldTicker.maxFPS = 5;
     worldTicker.add(() => {
@@ -109,13 +106,14 @@ export class World extends Container {
           const renderLayer = this.renderLayers[depthLayer]?.[layer];
           if (!renderLayer) continue;
 
+          // const isWithinRange = depthLayer < this.player.depthLayer + 15;
           const isAbovePlayer =
             layer > this.player.layer && depthLayer >= this.player.depthLayer;
 
           if (isAbovePlayer) {
-            renderLayer.container.filters = alphaFilter;
+            this.abovePlayer.addChild(renderLayer.container);
           } else {
-            renderLayer.container.filters = null;
+            this.behindPlayer.addChild(renderLayer.container);
           }
         }
       }
@@ -168,8 +166,15 @@ export class World extends Container {
       const tile = tilesAtPoint[i];
       const localTilePoint = tile.walkable.toLocal(globalPoint);
       const isWalkable = tile.walkable.containsPoint(localTilePoint);
+      const isAbovePlayer = tile.parent?.parent?.label === "abovePlayer";
 
-      if (i === 0 && isWalkable) {
+      if (isAbovePlayer) {
+        console.log(`Tile ${i} is above player`);
+        continue;
+      }
+
+      if (i == 0 && isWalkable) {
+        console.log(`Tile ${i} is walkable`);
         validTile = tile;
         continue;
       }
@@ -181,8 +186,6 @@ export class World extends Container {
     }
 
     if (!validTile) return;
-
-    console.log(!!validTile);
 
     console.log(
       `Moving to desired position...\nScreen: (${globalPoint.x}, ${globalPoint.y})\nLocal: (${desiredPosition.x}, ${desiredPosition.y})\nTile: (${tilePosition.x}, ${tilePosition.y})`,
