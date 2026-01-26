@@ -5,7 +5,7 @@ import type { WorldTile } from "./world-tile";
 export class Player extends Entity {
   debugText: Text;
   isHovered: boolean = false;
-  desiredPosition?: PointData;
+  desiredPositions: PointData[] = [];
   tile?: WorldTile;
 
   constructor(options: EntityOptions) {
@@ -15,7 +15,7 @@ export class Player extends Entity {
       },
       eventMode: "static",
       cursor: "pointer",
-      position: { x: 16, y: 16 * 4 },
+      position: { x: 16, y: 16 * 8 },
     };
 
     super({

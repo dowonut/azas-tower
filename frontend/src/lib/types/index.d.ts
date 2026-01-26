@@ -11,3 +11,6 @@ export type RenderLayerName = "behindPlayer" | "abovePlayer";
 export type RenderLayers = {
   [key in RenderLayerName]: RenderLayer;
 };
+
+/** A point in 3D space */
+export type WorldPoint = { x: number; y: number; z: number };

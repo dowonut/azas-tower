@@ -81,6 +81,7 @@ createRoot(document.getElementById("root")!).render(
   // Create world container
   const worldContainer = new Container({
     scale: 3,
+    eventMode: "static",
   });
   viewport.addChild(worldContainer);
 
@@ -98,7 +99,7 @@ createRoot(document.getElementById("root")!).render(
   await world.init({ player });
 
   // Creat move indicator
-  const moveIndicator = await MoveIndicator.init();
+  const moveIndicator = await MoveIndicator.init({ player });
 
   // Add children to container
   worldContainer.addChild(world);
@@ -107,14 +108,15 @@ createRoot(document.getElementById("root")!).render(
   worldContainer.addChild(player2);
 
   // Create debug overlay
-  const debugOverlay = new DebugOverlay({ ticker: app.ticker });
+  const debugOverlay = new DebugOverlay({
+    ticker: app.ticker,
+    world,
+    worldContainer,
+  });
   stage.addChild(debugOverlay);
 
   // Add global tickers
   app.ticker.add((ticker) => {
-    // Attach tickers
-    moveIndicator.ticker({ player });
-
     // Handle player movement
     handlePlayerMovement({ player, world, ticker });
   });

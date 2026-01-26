@@ -1,5 +1,6 @@
 import {
   Container,
+  Text,
   type PointData,
   type SpriteOptions,
   type Texture,
@@ -7,6 +8,7 @@ import {
 import type { TileProperties } from "../types/tiled";
 import { PerfectSprite } from "./perfect-sprite";
 import type { Player } from "./player";
+import { HslAdjustmentFilter } from "pixi-filters";
 
 export type WorldTileOptions = {
   tilePosition: PointData;
@@ -40,7 +42,10 @@ export class WorldTile extends Container {
     super({ eventMode: "static", position });
     Object.assign(this, options);
 
-    const sprite = new PerfectSprite({ texture, ...spriteOptions });
+    const sprite = new PerfectSprite({
+      texture,
+      ...spriteOptions,
+    });
     this.sprite = sprite;
     this.addChild(sprite);
 
@@ -62,8 +67,8 @@ export class WorldTile extends Container {
     };
 
     // const text = new Text({
-    //   text: `${this.layer}:${this.depthLayer}`,
-    //   // text: `${this.tilePosition.x}, ${this.tilePosition.y}`,
+    //   // text: `${this.layer}:${this.depthLayer}`,
+    //   text: `${this.tilePosition.x}, ${this.tilePosition.y}`,
     //   scale: 0.2,
     //   anchor: 0.5,
     //   x: 16,

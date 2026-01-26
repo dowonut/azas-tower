@@ -25,7 +25,7 @@ export function getTileUnderPlayer({
     (tile) =>
       tile.isWalkable &&
       // !tile.hasTileAbove({ tiles: world.tiles }) &&
-      tile.layer - layer <= 1,
+      tile.layer - layer < 1,
   );
 
   if (validTiles.length < 1) return null;

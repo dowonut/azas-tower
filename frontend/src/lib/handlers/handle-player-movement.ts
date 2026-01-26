@@ -17,9 +17,11 @@ export function handlePlayerMovement({
   world: World;
   ticker: Ticker;
 }) {
-  const { desiredPosition, x, y } = player;
+  const { desiredPositions, x, y } = player;
 
-  if (!desiredPosition) return;
+  if (desiredPositions.length < 1) return;
+
+  const desiredPosition = desiredPositions[0];
 
   // Get tiles currently under the player's feet
   const tilePosition = toTilePosition({ x, y });
@@ -45,9 +47,11 @@ export function handlePlayerMovement({
   // Do nothing if distance is very small
   if (distance <= 1) {
     const roundedPosition = { x: round(x), y: round(y) };
-    console.log("Arrived at destination:", roundedPosition, tilePosition);
-    player.desiredPosition = undefined;
+    player.desiredPositions.splice(0, 1);
     player.position.set(roundedPosition.x, roundedPosition.y);
+    if (player.desiredPositions.length < 1) {
+      console.log("Arrived at destination:", roundedPosition, tilePosition);
+    }
     return;
   }
 
