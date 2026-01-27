@@ -13,6 +13,7 @@ import { CustomViewport } from "./lib/classes/custom-viewport.ts";
 import { DebugOverlay } from "./lib/classes/debug-overlay.ts";
 import { MoveIndicator } from "./lib/classes/move-indicator.ts";
 import { Player } from "./lib/classes/player.ts";
+import { server } from "./lib/classes/socket.ts";
 import { World } from "./lib/classes/world.ts";
 import { handlePlayerMovement } from "./lib/handlers/handle-player-movement.ts";
 
@@ -30,6 +31,11 @@ createRoot(document.getElementById("root")!).render(
     antialias: false,
     // autoDensity: true,
     // resolution: devicePixelRatio || 1,
+  });
+
+  server.socket.emit("message", "hi server!");
+  server.socket.on("message-back", (message) => {
+    console.log(`Received response:`, message);
   });
 
   // Attach to game div

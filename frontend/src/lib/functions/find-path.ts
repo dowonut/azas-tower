@@ -19,9 +19,9 @@ export function findPath({
 
   if (rawPath.length < 1) return null;
 
-  // const smoothedPath = Util.smoothenPath(grid, rawPath);
+  const smoothedPath = Util.compressPath(rawPath);
 
-  const path = rawPath.map((x) => ({ x: x[0], y: x[1] }));
+  const path = smoothedPath.map((x) => ({ x: x[0], y: x[1] }));
 
   return path;
 }

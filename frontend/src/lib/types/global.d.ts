@@ -3,6 +3,7 @@ import { type PixiReactElementProps } from "@pixi/react";
 import type { CustomViewport } from "../classes/custom-viewport";
 import type { PerfectSprite } from "../classes/perfect-sprite";
 import type { WorldTile } from "../classes/world-tile";
+import type { Server } from "../classes/socket";
 
 declare module "pixi.js" {
   interface TextureSource {
@@ -14,4 +15,8 @@ declare module "pixi.js" {
 declare module "*.tmx" {
   const content: string;
   export default content;
+}
+
+declare global {
+  var server: Server | undefined;
 }
