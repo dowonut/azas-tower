@@ -3,7 +3,7 @@ import type { Player } from "../classes/player";
 import type { World } from "../classes/world";
 import { getTileUnderPlayer } from "../functions/get-tile-under-player";
 import { round } from "../functions/round";
-import { toTilePosition } from "../functions/to-tile-position";
+import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 
 /**
  * Handle updating player movement
@@ -24,7 +24,7 @@ export function handlePlayerMovement({
   const desiredPosition = desiredPositions[0];
 
   // Get tiles currently under the player's feet
-  const tilePosition = toTilePosition({ x, y });
+  const tilePosition = isometricToCartesian({ x, y });
   const tileUnderPlayer = getTileUnderPlayer({
     player,
     world,

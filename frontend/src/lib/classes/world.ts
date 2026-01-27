@@ -1,23 +1,25 @@
+import PF from "pathfinding";
 import {
   AlphaFilter,
   Container,
   FederatedPointerEvent,
+  Graphics,
+  GraphicsContext,
   RenderLayer,
   Ticker,
   type ContainerOptions,
 } from "pixi.js";
-import PF from "pathfinding";
 
 import map from "../../assets/maps/map-1.json";
 import tileset from "../../assets/tilesets/background-tileset.json";
-import { getTilesAt } from "../functions/get-tiles-at";
+import { findPath } from "../functions/find-path";
+import { getWalkableTileAt } from "../functions/get-walkable-tile-at";
 import { parseTilemap } from "../functions/parse-tilemap";
-import { toTilePosition } from "../functions/to-tile-position";
+import { toTextPoint } from "../functions/to-text-point";
 import type { Player } from "./player";
 import type { WorldTile } from "./world-tile";
-import { toTextPoint } from "../functions/to-text-point";
-import { findPath } from "../functions/find-path";
-import { toGlobalPosition } from "../functions/to-global-position";
+import { isometricToCartesian } from "../functions/isometric-to-cartesian";
+import { cartesianToIsometric } from "../functions/cartesian-to-isometric";
 
 export class World extends Container {
   player!: Player;
@@ -31,7 +33,8 @@ export class World extends Container {
   abovePlayerContainer: Container;
   tileContainer: Container;
   pathfindingGrid: PF.Grid;
-  // walkable!: Container;
+  pathfindingGridScale: number = 5;
+  pathfindingGridRatio: number;
 
   constructor(
     options: ContainerOptions = { eventMode: "static", sortableChildren: true },
@@ -45,7 +48,11 @@ export class World extends Container {
     });
     this.tileContainer = new Container({ label: "tileContainer" });
 
-    this.pathfindingGrid = new PF.Grid(map.width * 1, map.height * 1);
+    this.pathfindingGrid = new PF.Grid(
+      map.width * this.pathfindingGridScale,
+      map.height * this.pathfindingGridScale,
+    );
+    this.pathfindingGridRatio = map.width / this.pathfindingGrid.width;
   }
 
   /** Initialize the world by loading and rendering tiles. */
@@ -79,11 +86,6 @@ export class World extends Container {
         );
 
         if (tilesAtLayer.length < 1) continue;
-
-        // const container = new Container({
-        //   // tint: { h: (360 / highestDepthLayer) * depthLayer, s: 100, l: 50 },
-        // });
-        // this.behindPlayer.addChild(container);
         this.tileContainer.addChild(...tilesAtLayer);
 
         // Add render layer
@@ -103,21 +105,13 @@ export class World extends Container {
     this.addChild(this.tileContainer);
     this.addChild(this.abovePlayerContainer);
 
+    // Show pathfinding grid
+    // this.attachPathfindingGrid();
+
     const worldTicker = new Ticker();
     worldTicker.minFPS = 1;
     worldTicker.maxFPS = 5;
     worldTicker.add(() => {
-      // if (this.player.desiredPositions.length < 1) return;
-
-      // const oneTileOverlapsPlayer = this.tiles.some(
-      //   (tile) =>
-      //     Math.abs(tile.x + 16 - this.player.x) < 16 &&
-      //     Math.abs(tile.y + 16 - this.player.y) < 16 &&
-      //     tile.layer > this.player.layer &&
-      //     tile.depthLayer >= this.player.depthLayer,
-      // );
-      // console.log(oneTileOverlapsPlayer);
-
       for (
         let depthLayer = 0;
         depthLayer <= this.highestDepthLayer;
@@ -127,15 +121,6 @@ export class World extends Container {
           const renderLayer = this.renderLayers[depthLayer]?.[layer];
           if (!renderLayer) continue;
 
-          // Get tiles that are close to the player
-          // const tilesNearPlayer = renderLayer.tiles.filter(
-          //   (tile) =>
-          // Math.abs(this.player.x - tile.x) < 128 &&
-          // Math.abs(this.player.y - tile.y) < 128,
-          // );
-          // if (tilesNearPlayer.length < 1) return;
-
-          // const isWithinRange = depthLayer < this.player.depthLayer + 15;
           const isAbovePlayer =
             layer > this.player.layer && depthLayer >= this.player.depthLayer;
 
@@ -152,26 +137,11 @@ export class World extends Container {
               renderLayer.renderLayer.attach(tile);
             }
           }
-
-          // if (isAbovePlayer) {
-          // this.abovePlayerContainer.addChild(...tilesNearPlayer);
-          // } else {
-          // this.tileContainer.addChild(...tilesNearPlayer);
-          // renderLayer.renderLayer.attach(...tilesNearPlayer);
-          // }
         }
       }
     });
     worldTicker.start();
   }
-
-  /** Create a new render layer and attach an entity */
-  // createRenderLayer({ entity }: { entity: Entity }) {
-  //   const renderLayer = new RenderLayer();
-  //   renderLayer.attach(entity);
-  //   this.addChild(renderLayer);
-  //   return renderLayer;
-  // }
 
   /** Handle click events */
   onpointerup = (e: FederatedPointerEvent) => {
@@ -186,64 +156,36 @@ export class World extends Container {
     };
 
     // Convert to local point within the map
-    const localPoint = this.toLocal(globalPoint) || globalPoint;
+    const worldPoint = this.toLocal(globalPoint) || globalPoint;
 
     // Round to get desired map position
     const desiredPosition = {
-      x: Math.round(localPoint.x),
-      y: Math.round(localPoint.y),
+      x: Math.floor(worldPoint.x),
+      y: Math.floor(worldPoint.y),
     };
 
-    // Calculate tile position
-    const tilePosition = toTilePosition(desiredPosition);
-
-    // Get tile at exact point
-    const tilesAtPoint = getTilesAt({
-      point: globalPoint,
-      tilePosition,
+    const validTile = getWalkableTileAt({
+      player: this.player,
+      point: desiredPosition,
       tiles: this.tiles,
     });
-    if (!tilesAtPoint || tilesAtPoint.length < 1) return;
-
-    // Check if point within tile is walkable
-    let validTile: WorldTile | undefined;
-    for (let i = 0; i < tilesAtPoint.length && !validTile; i++) {
-      const tile = tilesAtPoint[i];
-      const localTilePoint = tile.walkable.toLocal(globalPoint);
-      const isWalkable = tile.walkable.containsPoint(localTilePoint);
-      const isAbovePlayer = tile.parent?.parent?.label === "abovePlayer";
-
-      if (isAbovePlayer) {
-        // console.log(`Tile ${i} is above player`);
-        continue;
-      }
-
-      if (i == 0 && isWalkable) {
-        // console.log(`Tile ${i} is walkable`);
-        validTile = tile;
-        continue;
-      }
-
-      if (isWalkable && !tile.hasTileAbove({ tiles: this.tiles })) {
-        // console.log(`Tile ${i} is walkable and has nothing above`);
-        validTile = tile;
-        continue;
-      }
-    }
 
     if (!validTile) return;
 
     // Run pathfinding algorithm
+    const fromPoint = isometricToCartesian(this.player.position, {
+      tileRatio: this.pathfindingGridRatio,
+    });
+    const toPoint = isometricToCartesian(desiredPosition, {
+      tileRatio: this.pathfindingGridRatio,
+    });
     console.log(
-      `Attempting to pathfind from ${toTextPoint(this.player.tilePosition)} to ${toTextPoint(tilePosition)}`,
+      `Attempting to pathfind from ${toTextPoint(fromPoint)} to ${toTextPoint(toPoint)}`,
     );
-    const scale = 1;
+    const ratio = map.width / this.pathfindingGrid.width;
     const path = findPath({
-      from: {
-        x: this.player.tilePosition.x * scale,
-        y: this.player.tilePosition.y * scale,
-      },
-      to: { x: tilePosition.x * scale, y: tilePosition.y * scale },
+      from: fromPoint,
+      to: toPoint,
       grid: this.pathfindingGrid,
     });
 
@@ -254,10 +196,7 @@ export class World extends Container {
 
     // Map to map coordinates
     const desiredPositions = path.map((point) =>
-      toGlobalPosition(
-        { x: point.x / scale, y: point.y / scale },
-        { offset: { x: 16, y: 8 } },
-      ),
+      cartesianToIsometric(point, { tileRatio: ratio, withTileOffset: false }),
     );
 
     // Set final position to the actual position wanted by the player
@@ -268,18 +207,60 @@ export class World extends Container {
     // );
 
     this.player.desiredPositions = desiredPositions;
-    // this.player.desiredPosition = desiredPosition;
   };
 
   /** Generate the world's pathfinding grid */
   private generatePathfindingGrid() {
-    for (const tile of this.tiles.filter((x) => x.layer === 1)) {
-      if (tile.hasTileAbove({ tiles: this.tiles })) {
-        this.pathfindingGrid.setWalkableAt(
-          tile.tilePosition.x,
-          tile.tilePosition.y,
-          false,
+    const ratio = this.pathfindingGridRatio;
+    for (let y = 0; y < this.pathfindingGrid.height; y++) {
+      for (let x = 0; x < this.pathfindingGrid.width; x++) {
+        const worldPoint = cartesianToIsometric(
+          { x, y },
+          { tileRatio: ratio, withTileOffset: false },
         );
+        const validTile = getWalkableTileAt({
+          player: this.player,
+          point: worldPoint,
+          tiles: this.tiles,
+          onlyCurrentLayer: true,
+        });
+        const isWalkable = !!validTile && validTile.isWalkable;
+        this.pathfindingGrid.setWalkableAt(x, y, isWalkable);
+      }
+    }
+  }
+
+  /** Attach the pathfinding grid to visualize it */
+  private attachPathfindingGrid() {
+    const gridContainer = new Container({ eventMode: "none", alpha: 0.5 });
+    this.addChild(gridContainer);
+
+    const ratio = this.pathfindingGridRatio;
+    const nodeRadius = 4 * ratio;
+    const walkableNode = new GraphicsContext()
+      .circle(0, 0, nodeRadius)
+      .fill("green");
+    const obstructedNode = new GraphicsContext()
+      .circle(0, 0, nodeRadius)
+      .fill("red");
+
+    // this.pathfindingGrid.height
+    // this.pathfindingGrid.width
+    for (let y = 0; y < this.pathfindingGrid.height; y++) {
+      for (let x = 0; x < this.pathfindingGrid.width; x++) {
+        const node = this.pathfindingGrid.getNodeAt(x, y);
+        const worldPosition = cartesianToIsometric(
+          { x, y },
+          {
+            tileRatio: ratio,
+            withTileOffset: false,
+          },
+        );
+        const nodeGraphics = new Graphics({
+          context: node.walkable ? walkableNode : obstructedNode,
+          position: worldPosition,
+        });
+        gridContainer.addChild(nodeGraphics);
       }
     }
   }

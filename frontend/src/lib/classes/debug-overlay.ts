@@ -6,17 +6,23 @@ import {
   type ContainerOptions,
   type PointData,
 } from "pixi.js";
-import type { World } from "./world";
+import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 import { toTextPoint } from "../functions/to-text-point";
-import { toTilePosition } from "../functions/to-tile-position";
-import type { WorldPoint } from "../types";
-import { toWorldPoint } from "../functions/to-world-point";
+import type { World } from "./world";
 
 export class DebugOverlay extends Container {
   debugText: Text;
-  mousePosition2D: PointData = { x: 0, y: 0 };
-  mousePosition3D: WorldPoint = { x: 0, y: 0, z: 0 };
-  mousePositionTile: PointData = { x: 0, y: 0 };
+  mouse: {
+    screen: PointData;
+    world: PointData;
+    tile: PointData;
+    PF: PointData;
+  } = {
+    screen: { x: 0, y: 0 },
+    world: { x: 0, y: 0 },
+    tile: { x: 0, y: 0 },
+    PF: { x: 0, y: 0 },
+  };
 
   constructor({
     ticker,
@@ -40,7 +46,7 @@ export class DebugOverlay extends Container {
     this.addChild(debugText);
 
     // Handle world mouse movement
-    worldContainer.onmousemove = (e: FederatedPointerEvent) => {
+    worldContainer.onglobalmousemove = (e: FederatedPointerEvent) => {
       // Capture and round global (screen) point
       const globalPoint = {
         x: Math.round(e.globalX),
@@ -48,31 +54,39 @@ export class DebugOverlay extends Container {
       };
 
       // Convert to local point within the map
-      const localPoint = worldContainer.toLocal(globalPoint) || globalPoint;
+      const worldPoint = worldContainer.toLocal(globalPoint) || globalPoint;
 
       // Round local position
       const roundedPosition = {
-        x: Math.floor(localPoint.x),
-        y: Math.floor(localPoint.y),
+        x: Math.floor(worldPoint.x),
+        y: Math.floor(worldPoint.y),
       };
 
       // Calculate tile position
-      const tilePosition = toTilePosition(roundedPosition);
+      const tilePosition = isometricToCartesian(roundedPosition);
 
-      this.mousePosition2D = roundedPosition;
-      this.mousePosition3D = toWorldPoint(roundedPosition);
-      this.mousePositionTile = tilePosition;
+      // Calculate pathfinding grid position
+      const pathfindingGridPosition = isometricToCartesian(roundedPosition, {
+        tileRatio: world.pathfindingGridRatio,
+      });
+
+      this.mouse.screen = globalPoint;
+      this.mouse.world = roundedPosition;
+      // this.mousePosition3D = toWorldPoint(roundedPosition);
+      this.mouse.tile = tilePosition;
+      this.mouse.PF = pathfindingGridPosition;
     };
 
     const debugTicker = new Ticker();
     debugTicker.minFPS = 1;
-    debugTicker.maxFPS = 5;
+    debugTicker.maxFPS = 10;
     debugTicker.add((_) => {
       const fpsDisplay = Math.round(ticker.FPS);
       this.debugText.text = `FPS: ${fpsDisplay}
-Mouse (2D): ${toTextPoint(this.mousePosition2D)}
-Mouse (3D): ${toTextPoint(this.mousePosition3D)}
-Mouse (Tile): ${toTextPoint(this.mousePositionTile)}`;
+Mouse (Screen): ${toTextPoint(this.mouse.screen)}
+Mouse (World): ${toTextPoint(this.mouse.world)}
+Mouse (Tile): ${toTextPoint(this.mouse.tile)}
+Mouse (PF): ${toTextPoint(this.mouse.PF)}`;
     });
     debugTicker.start();
   }

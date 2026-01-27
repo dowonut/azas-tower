@@ -1,6 +1,7 @@
 import type { Texture } from "pixi.js";
 import { WorldTile } from "../classes/world-tile";
 import type { MapLayer, Tileset } from "../types/tiled";
+import { cartesianToIsometric } from "./cartesian-to-isometric";
 
 export function getWorldTilesFromLayers({
   layers,
@@ -33,13 +34,18 @@ export function getWorldTilesFromLayers({
       // Calculate sprite position using isometric projection
       const column = j % layer.width;
       const row = Math.floor(j / layer.width);
-      const x = ((column - row) * tileset.tilewidth) / 2;
-      const y = (column + row) * (tileset.tileheight / 4);
+      const isometricPosition = cartesianToIsometric(
+        { x: column, y: row },
+        {
+          tileWidth: tileset.tilewidth,
+          tileHeight: tileset.tileheight,
+        },
+      );
 
       const worldTile = new WorldTile({
         texture: textures[id],
         walkableTexture: walkableTextures[id],
-        position: { x, y },
+        position: isometricPosition,
         tilePosition: { x: column, y: row },
         spriteId: id,
         tileId: j,

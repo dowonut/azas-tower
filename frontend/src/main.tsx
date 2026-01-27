@@ -75,12 +75,12 @@ createRoot(document.getElementById("root")!).render(
       maxHeight: 3000,
     },
   });
-  viewport.position.set(500, 0);
   stage.addChild(viewport);
 
   // Create world container
+  const worldScale = 3;
   const worldContainer = new Container({
-    scale: 3,
+    scale: worldScale,
     eventMode: "static",
   });
   viewport.addChild(worldContainer);
@@ -106,6 +106,9 @@ createRoot(document.getElementById("root")!).render(
   worldContainer.addChild(moveIndicator);
   worldContainer.addChild(player);
   worldContainer.addChild(player2);
+
+  // Set viewpoint according to world dimensions
+  viewport.position.set(500, 0);
 
   // Create debug overlay
   const debugOverlay = new DebugOverlay({

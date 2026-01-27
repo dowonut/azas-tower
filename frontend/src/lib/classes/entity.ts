@@ -6,7 +6,7 @@ import {
 } from "pixi.js";
 import { PerfectSprite } from "./perfect-sprite";
 import type { World } from "./world";
-import { toTilePosition } from "../functions/to-tile-position";
+import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 
 export type EntityOptions = ContainerOptions & {
   world: World;
@@ -32,20 +32,17 @@ export class Entity extends Container {
     const entityTicker = new Ticker();
     entityTicker.maxFPS = 30;
 
-    // const renderLayer = world.createRenderLayer({ entity: this });
-
     entityTicker.add(() => {
       const renderLayer = world.renderLayers[this.depthLayer]?.[this.layer];
       if (!renderLayer) return;
       renderLayer.renderLayer.attach(this);
-      // renderLayer.zIndex = this.layer + 1 * this.depthLayer + 1;
     });
 
     entityTicker.start();
   }
 
   get tilePosition() {
-    return toTilePosition(this.position);
+    return isometricToCartesian(this.position);
   }
 
   get depthLayer() {
