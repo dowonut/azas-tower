@@ -9,13 +9,14 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app.tsx";
 import "./index.css";
+import { GameConsole } from "./lib/classes/game-console.ts";
 import { CustomViewport } from "./lib/classes/custom-viewport.ts";
 import { DebugOverlay } from "./lib/classes/debug-overlay.ts";
 import { MoveIndicator } from "./lib/classes/move-indicator.ts";
 import { Player } from "./lib/classes/player.ts";
-import { server } from "./lib/classes/socket.ts";
 import { World } from "./lib/classes/world.ts";
 import { handlePlayerMovement } from "./lib/handlers/handle-player-movement.ts";
+import { Server } from "./lib/classes/server.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -24,6 +25,9 @@ createRoot(document.getElementById("root")!).render(
 );
 
 (async () => {
+  // Create Server
+  const server = new Server();
+
   // Create Application
   const app = new Application();
   await app.init({
@@ -31,11 +35,6 @@ createRoot(document.getElementById("root")!).render(
     antialias: false,
     // autoDensity: true,
     // resolution: devicePixelRatio || 1,
-  });
-
-  server.socket.emit("message", "hi server!");
-  server.socket.on("message-back", (message) => {
-    console.log(`Received response:`, message);
   });
 
   // Attach to game div
@@ -124,9 +123,16 @@ createRoot(document.getElementById("root")!).render(
   });
   stage.addChild(debugOverlay);
 
+  // Create console
+  const gameConsole = new GameConsole({ app, server });
+  stage.addChild(gameConsole);
+
   // Add global tickers
   app.ticker.add((ticker) => {
     // Handle player movement
     handlePlayerMovement({ player, world, ticker });
   });
+
+  // Connect to the server once the entire client has initialized
+  server.connect();
 })();

@@ -64,7 +64,7 @@ export class PerfectSprite extends Sprite {
     const imageSource = textureSource.resource;
 
     if (!imageSource) {
-      console.warn("No image source:", this.texture);
+      // console.warn("No image source:", this.texture);
       return false;
     }
 
@@ -74,7 +74,7 @@ export class PerfectSprite extends Sprite {
 
     // Handle canvas source
     if (imageSource instanceof HTMLCanvasElement) {
-      console.info("Image source is canvas");
+      // console.info("Image source is canvas");
       canvas = imageSource;
       context = canvas.getContext("2d");
     }
@@ -84,7 +84,7 @@ export class PerfectSprite extends Sprite {
       imageSource instanceof ImageBitmap ||
       imageSource instanceof Image
     ) {
-      console.info("Image source is image");
+      // console.info("Image source is image");
       canvas = document.createElement("canvas");
       canvas.width = imageSource.width;
       canvas.height = imageSource.height;
@@ -122,7 +122,7 @@ export class PerfectSprite extends Sprite {
       }
     }
 
-    console.log(`Finished generating hitmap for texture source`);
+    // console.log(`Finished generating hitmap for texture source`);
     textureSource.hitmap = hitmap;
 
     return true;
