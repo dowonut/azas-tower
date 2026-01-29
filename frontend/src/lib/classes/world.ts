@@ -231,6 +231,7 @@ export class World extends Container {
   }
 
   /** Attach the pathfinding grid to visualize it */
+  // @ts-ignore
   private attachPathfindingGrid() {
     const gridContainer = new Container({ eventMode: "none", alpha: 0.5 });
     this.addChild(gridContainer);

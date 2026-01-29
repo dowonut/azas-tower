@@ -85,10 +85,8 @@ export class GameConsole extends Container {
     if (this.messages.length < 1) return;
 
     // Slice messages on overflow
-    let hasOverflow = false;
     let visibleMessages = this.messages;
     if (visibleMessages.length > this.MAX_MESSAGES) {
-      hasOverflow = true;
       visibleMessages = visibleMessages.slice(-this.MAX_MESSAGES);
       visibleMessages.unshift({
         authorType: "other",

@@ -6,16 +6,13 @@ import { getTilesAt } from "./get-tiles-at";
 /** Get the tile the player is currently standing on */
 export function getTileUnderPlayer({
   world,
-  player: { position, tilePosition, layer },
+  player: { position, layer },
 }: {
   world: World;
   player: Player;
 }): WorldTile | null {
-  const globalPosition = world.toGlobal({ x: position.x, y: position.y });
-
   const tilesUnderPlayer = getTilesAt({
-    point: globalPosition,
-    tilePosition,
+    point: position,
     tiles: world.tiles,
   });
 

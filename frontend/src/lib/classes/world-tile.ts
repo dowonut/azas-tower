@@ -1,6 +1,5 @@
 import {
   Container,
-  Text,
   type PointData,
   type SpriteOptions,
   type Texture,
@@ -8,7 +7,6 @@ import {
 import type { TileProperties } from "../types/tiled";
 import { PerfectSprite } from "./perfect-sprite";
 import type { Player } from "./player";
-import { HslAdjustmentFilter } from "pixi-filters";
 
 export type WorldTileOptions = {
   tilePosition: PointData;
