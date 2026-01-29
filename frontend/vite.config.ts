@@ -54,7 +54,7 @@ export default defineConfig({
     }),
   ],
   preview: {
-    allowedHosts: ["tower.linusguy.com", "localhost"],
+    allowedHosts: ["tower.linusguy.com", "tower-api.linusguy.com", "localhost"],
   },
   assetsInclude: ["**/*.tmx"],
 });
