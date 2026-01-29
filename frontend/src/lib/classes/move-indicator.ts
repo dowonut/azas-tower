@@ -17,7 +17,7 @@ export class MoveIndicator extends Container {
   lines: Graphics;
 
   private constructor({ player, ...options }: MoveIndicatorOptions) {
-    super({ eventMode: "none", visible: true });
+    super({ eventMode: "none", visible: false });
 
     const _lines = new Graphics({ filters: new AlphaFilter({ alpha: 0.5 }) });
     this.lines = _lines;

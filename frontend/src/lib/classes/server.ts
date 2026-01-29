@@ -26,7 +26,9 @@ export class Server {
   socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
   constructor() {
-    this.socket = io(import.meta.env.VITE_SERVER_URL, { autoConnect: false });
+    this.socket = io(import.meta.env.VITE_SERVER_URL, {
+      autoConnect: false,
+    });
 
     this.socket.on("connect", () => {
       console.info(`Connected to server`);

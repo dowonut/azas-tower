@@ -138,9 +138,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     io.ns("/", on_connect);
 
-    let cors = CorsLayer::new()
-        .allow_methods([Method::GET, Method::POST])
-        .allow_origin(Any);
+    // let cors = CorsLayer::new()
+    //     .allow_methods([Method::GET, Method::POST])
+    //     .allow_origin(Any);
+    let cors = CorsLayer::permissive();
 
     let app = axum::Router::new()
         .route("/", get(async || "Hello, World!"))
