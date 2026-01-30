@@ -1,0 +1,27 @@
+{ "columns":10,
+ "image":"..\/..\/..\/raw-assets\/sheets\/character-tileset.png",
+ "imageheight":320,
+ "imagewidth":320,
+ "margin":0,
+ "name":"character-tileset",
+ "spacing":0,
+ "tilecount":100,
+ "tiledversion":"1.11.2",
+ "tileheight":32,
+ "tiles":[
+        {
+         "animation":[
+                {
+                 "duration":500,
+                 "tileid":20
+                }, 
+                {
+                 "duration":500,
+                 "tileid":21
+                }],
+         "id":20
+        }],
+ "tilewidth":32,
+ "type":"tileset",
+ "version":"1.10"
+}

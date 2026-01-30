@@ -6,8 +6,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1769430825695,
-                "duration": 1.337608999805525,
+                "date": 1769814675574,
+                "duration": 0.2581400014460087,
                 "success": true
             }
         },
@@ -317,8 +317,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1769430825695,
-                "duration": 1.1175689999945462,
+                "date": 1769814675574,
+                "duration": 0.2237199991941452,
                 "success": true
             }
         },
@@ -420,6 +420,40 @@
         "/home/linus/projects/azas-tower/frontend/public/assets/sheets/walkable-tileset-6gsLpA.png": {
             "isFolder": false,
             "transformParent": ".assetpack/cache-buster/sheets/walkable-tileset-6gsLpA.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/raw-assets/sheets/character-tileset.png": {
+            "isFolder": false,
+            "parent": "/home/linus/projects/azas-tower/frontend/raw-assets/sheets",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1769814675574,
+                "duration": 1.557141002267599,
+                "success": true
+            },
+            "hash": "yKQlYg"
+        },
+        ".assetpack/mipmap/sheets/character-tileset.png": {
+            "isFolder": false,
+            "transformParent": "/home/linus/projects/azas-tower/frontend/raw-assets/sheets/character-tileset.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/sheets/character-tileset-1NXwKA.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/sheets/character-tileset.png",
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {}
+        },
+        "/home/linus/projects/azas-tower/frontend/public/assets/sheets/character-tileset-1NXwKA.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/sheets/character-tileset-1NXwKA.png",
             "metaData": {},
             "inheritedMetaData": {},
             "transformData": {}

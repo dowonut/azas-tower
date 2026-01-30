@@ -1,6 +1,8 @@
 import {
+  AnimatedSprite,
   Container,
   Ticker,
+  type AnimatedSpriteOptions,
   type ContainerOptions,
   type SpriteOptions,
 } from "pixi.js";
@@ -10,14 +12,14 @@ import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 
 export type EntityOptions = ContainerOptions & {
   world: World;
-  sprite?: SpriteOptions;
+  sprite?: AnimatedSpriteOptions;
 };
 
 /**
  * A game world entity
  */
 export class Entity extends Container {
-  sprite: PerfectSprite;
+  sprite: AnimatedSprite;
   world: World;
   layer: number = 1;
 
@@ -25,7 +27,7 @@ export class Entity extends Container {
     super(options);
     this.world = world;
 
-    const sprite = new PerfectSprite(spriteOptions);
+    const sprite = new AnimatedSprite(spriteOptions as AnimatedSpriteOptions);
     this.sprite = sprite;
     this.addChild(sprite);
 

@@ -1,6 +1,15 @@
-import { Assets, Text, Ticker, type PointData } from "pixi.js";
+import {
+  Assets,
+  Graphics,
+  Text,
+  Texture,
+  Ticker,
+  type PointData,
+} from "pixi.js";
 import { Entity, type EntityOptions } from "./entity";
 import type { WorldTile } from "./world-tile";
+import { parseTileset } from "../functions/parse-tileset";
+import tileset from "../../assets/tilesets/character-tileset.json";
 
 export class Player extends Entity {
   debugText: Text;
@@ -12,6 +21,8 @@ export class Player extends Entity {
     const defaultOptions: Partial<EntityOptions> = {
       sprite: {
         anchor: { x: 0.5, y: 1 },
+        animationSpeed: 0.01,
+        textures: [Texture.EMPTY],
       },
       eventMode: "static",
       cursor: "pointer",
@@ -61,10 +72,23 @@ export class Player extends Entity {
 
   /** Initialize the Player */
   async init() {
-    const texture = await Assets.load({
-      src: "https://pixijs.com/assets/bunny.png",
-    });
+    // const texture = await Assets.load({
+    //   src: "https://pixijs.com/assets/bunny.png",
+    // });
+    const { animations } = await parseTileset({ tileset });
+    console.log(animations);
+    this.sprite.textures = animations[21];
+    this.sprite.play();
 
-    this.sprite.texture = texture;
+    // const texture = textures[21];
+    // this.sprite.texture = texture;
+
+    const shadowSize = 10;
+    const shadow = new Graphics()
+      .ellipse(0, 0, shadowSize, shadowSize / 2)
+      .fill({ h: 0, s: 0, l: 0, a: 0.1 });
+    shadow.y = -(shadowSize / 2);
+    shadow.x = 2;
+    this.addChildAt(shadow, 0);
   }
 }

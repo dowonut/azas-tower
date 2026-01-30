@@ -143,6 +143,18 @@
           "data": {
             "tags": {}
           }
+        },
+        {
+          "alias": [
+            "sheets/character-tileset.png",
+            "character-tileset.png"
+          ],
+          "src": [
+            "sheets/character-tileset-1NXwKA.png"
+          ],
+          "data": {
+            "tags": {}
+          }
         }
       ]
     }

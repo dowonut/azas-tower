@@ -1,4 +1,10 @@
-import { Sprite, Texture, type PointData, type SpriteOptions } from "pixi.js";
+import {
+  AnimatedSprite,
+  Sprite,
+  Texture,
+  type PointData,
+  type SpriteOptions,
+} from "pixi.js";
 
 /**
  * Extended Pixi.js Sprite with pixel-perfect hit detection using texture alpha
