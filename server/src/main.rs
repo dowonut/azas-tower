@@ -4,7 +4,7 @@ use axum::routing::get;
 use rmpv::Value;
 use serde::{Deserialize, Serialize};
 use socketioxide::{
-    SocketIo,
+    ProtocolVersion, SocketIo, TransportType,
     extract::{AckSender, Data, SocketRef, State},
     socket::DisconnectReason,
 };
@@ -56,8 +56,11 @@ async fn on_connect(
     socket: SocketRef,
     Data(data): Data<Value>,
     State(state): State<GameState>,
+    transport: TransportType,
+    protocol: ProtocolVersion,
 ) {
     info!(ns = socket.ns(), ?socket.id, ?data, "Socket connected");
+    info!(?transport, ?protocol, "Details");
 
     // Add user to the HashMap when socket connects
     state

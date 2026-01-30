@@ -53,6 +53,7 @@ export default defineConfig({
       },
     }),
   ],
+  // build: { rolldownOptions: { output: { advancedChunks: {} } } },
   preview: {
     allowedHosts: ["tower.linusguy.com", "tower-api.linusguy.com", "localhost"],
   },
