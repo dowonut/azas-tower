@@ -153,7 +153,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Set up socketioxide
 
-    let (layer, io) = SocketIo::builder().with_state(state.clone()).build_layer();
+    let (layer, io) = SocketIo::builder()
+        .req_path("/ws")
+        .with_state(state.clone())
+        .build_layer();
 
     io.ns("/", on_connect);
 

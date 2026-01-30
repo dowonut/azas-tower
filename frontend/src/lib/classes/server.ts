@@ -30,6 +30,7 @@ export class Server {
 
   constructor() {
     this.socket = io(import.meta.env.VITE_SERVER_URL, {
+      path: "/ws",
       autoConnect: false,
       transports: ["websocket"],
     });
