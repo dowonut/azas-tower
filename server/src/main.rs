@@ -189,9 +189,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Starting server");
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3004")
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3004").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 
     Ok(())
