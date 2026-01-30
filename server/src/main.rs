@@ -1,19 +1,26 @@
-use std::{collections::HashMap, sync::Arc};
+use std::num::NonZeroU32;
 
 use axum::routing::get;
-use http::Method;
 use rmpv::Value;
 use serde::{Deserialize, Serialize};
 use socketioxide::{
     SocketIo,
-    extract::{Data, SocketRef, State},
+    extract::{AckSender, Data, SocketRef, State},
     socket::DisconnectReason,
 };
-use tokio::sync::RwLock;
 use tower::ServiceBuilder;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::CorsLayer;
 use tracing::info;
 use tracing_subscriber::FmtSubscriber;
+
+mod state;
+mod user;
+mod utility;
+
+use state::GameState;
+use user::User;
+
+use crate::{user::UserUpdate, utility::Point};
 
 #[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -21,7 +28,7 @@ enum MessageAuthorType {
     #[default]
     Server,
     User,
-    Other,
+    // Other,
 }
 
 #[derive(Serialize, Default)]
@@ -38,52 +45,32 @@ struct ClientMessage {
     content: String,
 }
 
-#[derive(Clone, Debug)]
-struct User {
-    name: String,
+#[derive(Deserialize, Debug)]
+struct PlayerMove {
+    x: i32,
+    y: i32,
 }
 
-#[derive(Clone, Debug)]
-struct GameState {
-    users: Arc<RwLock<HashMap<String, User>>>,
-}
-
-impl GameState {
-    fn new() -> Self {
-        Self {
-            users: Arc::new(RwLock::new(HashMap::new())),
-        }
-    }
-
-    async fn add_user(&self, id: String, user: User) {
-        let mut users = self.users.write().await;
-        users.insert(id, user);
-    }
-
-    async fn remove_user(&self, id: &str) {
-        let mut users = self.users.write().await;
-        users.remove(id);
-    }
-
-    async fn get_user(&self, id: &str) -> Option<User> {
-        let users = self.users.read().await;
-        users.get(id).cloned()
-    }
-}
-
-async fn on_connect(socket: SocketRef, Data(data): Data<Value>, State(state): State<GameState>) {
+async fn on_connect(
+    io: SocketIo,
+    socket: SocketRef,
+    Data(data): Data<Value>,
+    State(state): State<GameState>,
+) {
     info!(ns = socket.ns(), ?socket.id, ?data, "Socket connected");
 
     // Add user to the HashMap when socket connects
     state
         .add_user(
-            socket.id.to_string(),
+            socket.id.as_str(),
             User {
                 name: format!("anon-{}", socket.id),
+                ..Default::default()
             },
         )
         .await;
 
+    // Send a welcome message
     socket
         .emit(
             "message",
@@ -101,10 +88,11 @@ async fn on_connect(socket: SocketRef, Data(data): Data<Value>, State(state): St
                socket: SocketRef,
                Data::<ClientMessage>(message),
                State::<GameState>(state)| {
-            info!(?message, "Received message:");
+            info!(?message, "Received message");
 
             let user = state.get_user(socket.id.as_str()).await.unwrap();
 
+            // Broadcast the message to all clients
             io.emit(
                 "message",
                 &ServerMessage {
@@ -115,6 +103,30 @@ async fn on_connect(socket: SocketRef, Data(data): Data<Value>, State(state): St
             )
             .await
             .ok();
+        },
+    );
+
+    // Handle pings with acknowledgement
+    socket.on("ping", async |ack: AckSender| {
+        ack.send("pong").ok();
+    });
+
+    // Handle player movement
+    socket.on(
+        "player:move",
+        async |socket: SocketRef, Data::<PlayerMove>(data), State(state): State<GameState>| {
+            info!(?data, "Received player:move");
+
+            // Update the user with the new position
+            state
+                .update_user(
+                    socket.id.as_str(),
+                    UserUpdate {
+                        position: Some(Point(data.x, data.y)),
+                        ..Default::default()
+                    },
+                )
+                .await;
         },
     );
 
@@ -132,15 +144,40 @@ async fn on_connect(socket: SocketRef, Data(data): Data<Value>, State(state): St
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing::subscriber::set_global_default(FmtSubscriber::default())?;
 
-    let (layer, io) = SocketIo::builder()
-        .with_state(GameState::new())
-        .build_layer();
+    // Set up game state
+
+    let state = GameState::default();
+
+    // Set up socketioxide
+
+    let (layer, io) = SocketIo::builder().with_state(state.clone()).build_layer();
 
     io.ns("/", on_connect);
 
-    // let cors = CorsLayer::new()
-    //     .allow_methods([Method::GET, Method::POST])
-    //     .allow_origin(Any);
+    // Set up chron game loop
+
+    tokio::spawn(async move {
+        let updates_per_second = NonZeroU32::new(20).unwrap();
+        let frames_per_second = NonZeroU32::new(20).unwrap();
+        let clock = chron::Clock::new(updates_per_second).max_frame_rate(frames_per_second);
+
+        for tick in clock {
+            match tick {
+                chron::Tick::Update => {
+                    // info!("update");
+                }
+                chron::Tick::Render { interpolation: _ } => {
+                    // Emit current game state
+                    let snapshot = state.get_snapshot().await;
+                    io.emit("state", &snapshot).await.ok();
+                }
+            }
+            tokio::task::yield_now().await;
+        }
+    });
+
+    // Set up axum
+
     let cors = CorsLayer::permissive();
 
     let app = axum::Router::new()

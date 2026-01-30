@@ -20,9 +20,11 @@ import type { Player } from "./player";
 import type { WorldTile } from "./world-tile";
 import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 import { cartesianToIsometric } from "../functions/cartesian-to-isometric";
+import type { Server } from "./server";
 
 export class World extends Container {
   player!: Player;
+  server!: Server;
   tiles: WorldTile[] = [];
   renderLayers: {
     renderLayer: RenderLayer;
@@ -56,8 +58,15 @@ export class World extends Container {
   }
 
   /** Initialize the world by loading and rendering tiles. */
-  async init({ player: _player }: { player: Player }) {
+  async init({
+    player: _player,
+    server: _server,
+  }: {
+    player: Player;
+    server: Server;
+  }) {
     this.player = _player;
+    this.server = _server;
 
     const { tiles } = await parseTilemap({
       map,
@@ -164,49 +173,51 @@ export class World extends Container {
       y: Math.floor(worldPoint.y),
     };
 
-    const validTile = getWalkableTileAt({
-      player: this.player,
-      point: desiredPosition,
-      tiles: this.tiles,
-    });
+    this.server.socket.emit("player:move", desiredPosition);
 
-    if (!validTile) return;
+    // const validTile = getWalkableTileAt({
+    //   player: this.player,
+    //   point: desiredPosition,
+    //   tiles: this.tiles,
+    // });
 
-    // Run pathfinding algorithm
-    const fromPoint = isometricToCartesian(this.player.position, {
-      tileRatio: this.pathfindingGridRatio,
-    });
-    const toPoint = isometricToCartesian(desiredPosition, {
-      tileRatio: this.pathfindingGridRatio,
-    });
-    console.log(
-      `Attempting to pathfind from ${toTextPoint(fromPoint)} to ${toTextPoint(toPoint)}`,
-    );
-    const ratio = map.width / this.pathfindingGrid.width;
-    const path = findPath({
-      from: fromPoint,
-      to: toPoint,
-      grid: this.pathfindingGrid,
-    });
+    // if (!validTile) return;
 
-    if (!path) {
-      console.log(`Unable to find path`);
-      return;
-    }
-
-    // Map to map coordinates
-    const desiredPositions = path.map((point) =>
-      cartesianToIsometric(point, { tileRatio: ratio, withTileOffset: false }),
-    );
-
-    // Set final position to the actual position wanted by the player
-    desiredPositions[desiredPositions.length - 1] = desiredPosition;
-
+    // // Run pathfinding algorithm
+    // const fromPoint = isometricToCartesian(this.player.position, {
+    //   tileRatio: this.pathfindingGridRatio,
+    // });
+    // const toPoint = isometricToCartesian(desiredPosition, {
+    //   tileRatio: this.pathfindingGridRatio,
+    // });
     // console.log(
-    //   `Moving to desired position...\nScreen: (${globalPoint.x}, ${globalPoint.y})\nLocal: (${desiredPosition.x}, ${desiredPosition.y})\nTile: (${tilePosition.x}, ${tilePosition.y})`,
+    //   `Attempting to pathfind from ${toTextPoint(fromPoint)} to ${toTextPoint(toPoint)}`,
+    // );
+    // const ratio = map.width / this.pathfindingGrid.width;
+    // const path = findPath({
+    //   from: fromPoint,
+    //   to: toPoint,
+    //   grid: this.pathfindingGrid,
+    // });
+
+    // if (!path) {
+    //   console.log(`Unable to find path`);
+    //   return;
+    // }
+
+    // // Map to map coordinates
+    // const desiredPositions = path.map((point) =>
+    //   cartesianToIsometric(point, { tileRatio: ratio, withTileOffset: false }),
     // );
 
-    this.player.desiredPositions = desiredPositions;
+    // // Set final position to the actual position wanted by the player
+    // desiredPositions[desiredPositions.length - 1] = desiredPosition;
+
+    // // console.log(
+    // //   `Moving to desired position...\nScreen: (${globalPoint.x}, ${globalPoint.y})\nLocal: (${desiredPosition.x}, ${desiredPosition.y})\nTile: (${tilePosition.x}, ${tilePosition.y})`,
+    // // );
+
+    // this.player.desiredPositions = desiredPositions;
   };
 
   /** Generate the world's pathfinding grid */

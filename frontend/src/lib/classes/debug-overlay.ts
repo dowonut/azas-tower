@@ -9,9 +9,11 @@ import {
 import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 import { toTextPoint } from "../functions/to-text-point";
 import type { World } from "./world";
+import type { Server } from "./server";
 
 export class DebugOverlay extends Container {
   debugText: Text;
+  ping: string = "";
   mouse: {
     screen: PointData;
     world: PointData;
@@ -27,11 +29,13 @@ export class DebugOverlay extends Container {
   constructor({
     ticker,
     world,
+    server,
     worldContainer,
     ...options
   }: ContainerOptions & {
     ticker: Ticker;
     world: World;
+    server: Server;
     worldContainer: Container;
   }) {
     super(options);
@@ -77,12 +81,22 @@ export class DebugOverlay extends Container {
       this.mouse.PF = pathfindingGridPosition;
     };
 
+    // Regularly ping server to set latency
+    setInterval(() => {
+      if (server.socket.connected) {
+        server.ping().then((ping) => (this.ping = `${ping}ms`));
+      } else {
+        this.ping = "NO CONNECTION";
+      }
+    }, 1 * 1000);
+
     const debugTicker = new Ticker();
     debugTicker.minFPS = 1;
     debugTicker.maxFPS = 10;
-    debugTicker.add((_) => {
+    debugTicker.add(async (_) => {
       const fpsDisplay = Math.round(ticker.FPS);
       this.debugText.text = `FPS: ${fpsDisplay}
+Ping: ${this.ping}
 Mouse (Screen): ${toTextPoint(this.mouse.screen)}
 Mouse (World): ${toTextPoint(this.mouse.world)}
 Mouse (Tile): ${toTextPoint(this.mouse.tile)}

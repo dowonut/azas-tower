@@ -33,7 +33,8 @@ export class Player extends Entity {
       this.tint = 0xffffff;
     };
 
-    const text = () => `${this.layer}:${this.depthLayer}`;
+    const text = () => this.label ?? "N/A";
+    // const text = () => `${this.layer}:${this.depthLayer}`;
     // const text = () =>
     //   `${this.tile?.tilePosition.x}, ${this.tile?.tilePosition.y}`;
 

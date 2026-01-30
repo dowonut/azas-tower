@@ -74,5 +74,4 @@ export function handlePlayerMovement({
 
   // Update position in the store
   player.position.set(x + moveX, y + moveY);
-  player.position._x;
 }

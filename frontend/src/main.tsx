@@ -85,6 +85,7 @@ createRoot(document.getElementById("root")!).render(
   // Create world container
   const worldScale = 3;
   const worldContainer = new Container({
+    label: "worldContainer",
     scale: worldScale,
     eventMode: "static",
   });
@@ -97,20 +98,26 @@ createRoot(document.getElementById("root")!).render(
   const player = new Player({ world });
   await player.init();
 
-  const player2 = new Player({ world, x: 64, y: 16 * 6 });
-  await player2.init();
+  // const player2 = new Player({ world, x: 64, y: 16 * 6 });
+  // await player2.init();
 
   // Initialize world after player
-  await world.init({ player });
+  await world.init({ player, server });
 
   // Creat move indicator
   const moveIndicator = await MoveIndicator.init({ player });
 
+  // Create entity container
+  const entityContainer = new Container({
+    label: "entityContainer",
+  });
+  entityContainer.addChild(player);
+  // entityContainer.addChild(player2);
+
   // Add children to container
   worldContainer.addChild(world);
   worldContainer.addChild(moveIndicator);
-  worldContainer.addChild(player);
-  worldContainer.addChild(player2);
+  worldContainer.addChild(entityContainer);
 
   // Set viewpoint according to world dimensions
   viewport.position.set(500, 0);
@@ -118,6 +125,7 @@ createRoot(document.getElementById("root")!).render(
   // Create debug overlay
   const debugOverlay = new DebugOverlay({
     ticker: app.ticker,
+    server,
     world,
     worldContainer,
   });
@@ -130,9 +138,49 @@ createRoot(document.getElementById("root")!).render(
   // Add global tickers
   app.ticker.add((ticker) => {
     // Handle player movement
-    handlePlayerMovement({ player, world, ticker });
+    // handlePlayerMovement({ player, world, ticker });
   });
 
   // Connect to the server once the entire client has initialized
   server.connect();
+
+  // Handle server state changes
+  server.onState(async (state) => {
+    if (!server.socket.id) return;
+    const user = state.users[server.socket.id];
+    player.label = user.name;
+    player.x = user.position[0];
+    player.y = user.position[1];
+
+    // Iterate through users
+    for (const [id, user] of Object.entries(state.users)) {
+      // Ignore self
+      if (id === server.socket.id) continue;
+
+      // Create new player
+      const player = entityContainer.getChildByLabel(user.name);
+      if (player === null) {
+        const newPlayer = new Player({
+          world,
+          label: user.name,
+          x: user.position[0],
+          y: user.position[1],
+        });
+        await newPlayer.init();
+        entityContainer.addChild(newPlayer);
+      }
+      // Update player
+      else {
+        player.label = user.name;
+        player.x = user.position[0];
+        player.y = user.position[1];
+      }
+    }
+
+    // Clean up disconnected users
+    entityContainer.children.forEach((entity) => {
+      if (!Object.values(state.users).some((x) => x.name === entity.label))
+        entity.destroy({ children: true });
+    });
+  });
 })();
