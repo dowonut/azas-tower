@@ -1,8 +1,0 @@
-debug
-target
-
-**/*.rs.bk
-
-**/mutants.out*/
-
-.env

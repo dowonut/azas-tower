@@ -12,11 +12,11 @@
         {
          "animation":[
                 {
-                 "duration":500,
+                 "duration":1000,
                  "tileid":20
                 }, 
                 {
-                 "duration":500,
+                 "duration":1000,
                  "tileid":21
                 }],
          "id":20

@@ -21,7 +21,7 @@ export class Player extends Entity {
     const defaultOptions: Partial<EntityOptions> = {
       sprite: {
         anchor: { x: 0.5, y: 1 },
-        animationSpeed: 0.01,
+        animationSpeed: 0.02,
         textures: [Texture.EMPTY],
       },
       eventMode: "static",
@@ -76,7 +76,6 @@ export class Player extends Entity {
     //   src: "https://pixijs.com/assets/bunny.png",
     // });
     const { animations } = await parseTileset({ tileset });
-    console.log(animations);
     this.sprite.textures = animations[21];
     this.sprite.play();
 
