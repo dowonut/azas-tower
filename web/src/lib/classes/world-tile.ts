@@ -7,6 +7,9 @@ import {
 import type { TileProperties } from "../types/tiled";
 import { PerfectSprite } from "./perfect-sprite";
 import type { Player } from "./player";
+import { NormalFilter } from "./normal-filter";
+
+export type TextureType = "diffuse" | "normal";
 
 export type WorldTileOptions = {
   tilePosition: PointData;
@@ -16,8 +19,10 @@ export type WorldTileOptions = {
   position: PointData;
   texture: Texture;
   walkableTexture: Texture;
+  normalTexture: Texture;
   properties?: TileProperties[];
   highlighted?: boolean;
+  textureType?: TextureType;
 };
 
 export class WorldTile extends Container {
@@ -29,19 +34,23 @@ export class WorldTile extends Container {
   spriteId!: number;
   properties?: TileProperties[];
   highlighted?: boolean;
+  textureType: TextureType = "diffuse";
 
   constructor({
     sprite: spriteOptions,
     position,
     texture,
     walkableTexture,
+    normalTexture,
     ...options
   }: WorldTileOptions & { sprite?: SpriteOptions | Texture }) {
     super({ eventMode: "static", position });
     Object.assign(this, options);
 
+    const actualTexture =
+      options.textureType === "diffuse" ? texture : normalTexture;
     const sprite = new PerfectSprite({
-      texture,
+      texture: actualTexture,
       ...spriteOptions,
     });
     this.sprite = sprite;

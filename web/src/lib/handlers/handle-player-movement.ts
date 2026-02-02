@@ -4,6 +4,7 @@ import type { World } from "../classes/world";
 import { getTileUnderPlayer } from "../functions/get-tile-under-player";
 import { round } from "../functions/round";
 import { isometricToCartesian } from "../functions/isometric-to-cartesian";
+import { vectorToDirection } from "../functions/vector-to-direction";
 
 /**
  * Handle updating player movement
@@ -67,6 +68,10 @@ export function handlePlayerMovement({
     moveX *= normalizationFactor;
     moveY *= normalizationFactor;
   }
+
+  // Get the player's current heading
+  const heading = vectorToDirection({ x: moveX, y: moveY });
+  player.sprite.texture = player.headingTextures[heading];
 
   // Normalize according to delta time
   moveX *= ticker.elapsedMS / 8;

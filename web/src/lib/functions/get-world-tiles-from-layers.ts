@@ -1,5 +1,5 @@
 import type { Texture } from "pixi.js";
-import { WorldTile } from "../classes/world-tile";
+import { WorldTile, type TextureType } from "../classes/world-tile";
 import type { MapLayer, Tileset } from "../types/tiled";
 import { cartesianToIsometric } from "./cartesian-to-isometric";
 
@@ -8,11 +8,17 @@ export function getWorldTilesFromLayers({
   tileset,
   textures,
   walkableTextures,
+  diffuseTextures,
+  normalTextures,
+  textureType = "diffuse",
 }: {
   layers: MapLayer[];
   tileset: Tileset;
   textures: Record<string | number, Texture>;
   walkableTextures: Record<string | number, Texture>;
+  diffuseTextures: Record<string | number, Texture>;
+  normalTextures: Record<string | number, Texture>;
+  textureType?: TextureType;
 }) {
   let tiles: WorldTile[] = [];
 
@@ -45,12 +51,14 @@ export function getWorldTilesFromLayers({
       const worldTile = new WorldTile({
         texture: textures[id],
         walkableTexture: walkableTextures[id],
+        normalTexture: normalTextures[id],
         position: isometricPosition,
         tilePosition: { x: column, y: row },
         spriteId: id,
         tileId: j,
         layer: i,
         properties: tile?.properties,
+        textureType,
       });
 
       tiles.push(worldTile);

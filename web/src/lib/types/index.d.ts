@@ -14,3 +14,14 @@ export type RenderLayers = {
 
 /** A point in 3D space */
 export type WorldPoint = { x: number; y: number; z: number };
+
+/** A cardinal direction */
+export type CardinalDirection =
+  | "N"
+  | "NE"
+  | "E"
+  | "SE"
+  | "S"
+  | "SW"
+  | "W"
+  | "NW";

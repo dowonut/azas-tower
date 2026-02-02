@@ -8,6 +8,7 @@ import {
   RenderLayer,
   Ticker,
   type ContainerOptions,
+  type FederatedEventHandler,
 } from "pixi.js";
 
 import map from "../../assets/maps/map-1.json";
@@ -16,32 +17,54 @@ import { findPath } from "../functions/find-path";
 import { getWalkableTileAt } from "../functions/get-walkable-tile-at";
 import { parseTilemap } from "../functions/parse-tilemap";
 import { toTextPoint } from "../functions/to-text-point";
-import type { Player } from "./player";
+import { Player } from "./player";
 import type { WorldTile } from "./world-tile";
 import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 import { cartesianToIsometric } from "../functions/cartesian-to-isometric";
 import type { Server } from "./server";
+import type { Entity } from "./entity";
 
+export type WorldOptions = {
+  server: Server;
+  renderNormals?: boolean;
+};
+
+/**
+ * The World class is responsible for the actual game world
+ */
 export class World extends Container {
-  player!: Player;
-  server!: Server;
-  tiles: WorldTile[] = [];
-  renderLayers: {
+  private server!: Server;
+  private renderNormals!: boolean;
+
+  public tiles: WorldTile[] = [];
+
+  public renderLayers: {
     renderLayer: RenderLayer;
     tiles: WorldTile[];
   }[][] = [];
-  highestLayer: number = 0;
-  highestDepthLayer: number = 0;
-  abovePlayerContainer: Container;
-  tileContainer: Container;
-  pathfindingGrid: PF.Grid;
-  pathfindingGridScale: number = 5;
-  pathfindingGridRatio: number;
 
-  constructor(
-    options: ContainerOptions = { eventMode: "static", sortableChildren: true },
-  ) {
-    super(options);
+  private highestLayer: number = 0;
+  private highestDepthLayer: number = 0;
+
+  private abovePlayerContainer: Container;
+  private tileContainer: Container;
+
+  private renderPathfindingGrid = false;
+  private pathfindingGrid: PF.Grid;
+  public pathfindingGridScale: number = 3;
+  public pathfindingGridRatio: number;
+
+  private player?: Player;
+
+  public static readonly DEFAULT_OPTIONS: Partial<WorldOptions> = {
+    renderNormals: false,
+  };
+
+  constructor(options: WorldOptions) {
+    super({ eventMode: "static" });
+
+    options = { ...World.DEFAULT_OPTIONS, ...options };
+    Object.assign(this, options);
 
     const alphaFilter = new AlphaFilter({ alpha: 0.33 });
     this.abovePlayerContainer = new Container({
@@ -55,34 +78,46 @@ export class World extends Container {
       map.height * this.pathfindingGridScale,
     );
     this.pathfindingGridRatio = map.width / this.pathfindingGrid.width;
-  }
 
-  /** Initialize the world by loading and rendering tiles. */
-  async init({
-    player: _player,
-    server: _server,
-  }: {
-    player: Player;
-    server: Server;
-  }) {
-    this.player = _player;
-    this.server = _server;
-
-    const { tiles } = await parseTilemap({
-      map,
-      tileset,
-    });
-    this.tiles = tiles;
+    // Create and attach tiles
+    this.createTiles();
 
     // Generate pathfinding grid
     this.generatePathfindingGrid();
 
+    // Show pathfinding grid
+    if (this.renderPathfindingGrid) this.attachPathfindingGrid();
+
+    this.ticker();
+  }
+
+  /** Attach an entity to the world */
+  public attachEntity({
+    entity,
+    isPlayer = false,
+  }: {
+    entity: Entity;
+    isPlayer?: boolean;
+  }) {
+    if (isPlayer) this.player = entity as Player;
+  }
+
+  /** Create and attach tiles */
+  private createTiles() {
+    // Get tiles
+    const { tiles: _tiles } = parseTilemap({
+      map,
+      tileset,
+    });
+    this.tiles = _tiles;
+
     // Calculate total layers
-    const highestLayer = [...tiles].sort((a, b) => b.layer - a.layer)[0].layer;
+    const highestLayer = [...this.tiles].sort((a, b) => b.layer - a.layer)[0]
+      .layer;
     this.highestLayer = highestLayer;
 
     // Calculate total depth layers
-    const highestDepthLayer = [...tiles].sort(
+    const highestDepthLayer = [...this.tiles].sort(
       (a, b) => b.depthLayer - a.depthLayer,
     )[0].depthLayer;
     this.highestDepthLayer = highestDepthLayer;
@@ -90,7 +125,7 @@ export class World extends Container {
     // Handle render layers
     for (let depthLayer = 0; depthLayer <= highestDepthLayer; depthLayer++) {
       for (let layer = 0; layer <= highestLayer; layer++) {
-        const tilesAtLayer = tiles.filter(
+        const tilesAtLayer = this.tiles.filter(
           (x) => x.layer === layer && x.depthLayer === depthLayer,
         );
 
@@ -113,49 +148,12 @@ export class World extends Container {
 
     this.addChild(this.tileContainer);
     this.addChild(this.abovePlayerContainer);
-
-    // Show pathfinding grid
-    // this.attachPathfindingGrid();
-
-    const worldTicker = new Ticker();
-    worldTicker.minFPS = 1;
-    worldTicker.maxFPS = 5;
-    worldTicker.add(() => {
-      for (
-        let depthLayer = 0;
-        depthLayer <= this.highestDepthLayer;
-        depthLayer++
-      ) {
-        for (let layer = 0; layer <= this.highestLayer; layer++) {
-          const renderLayer = this.renderLayers[depthLayer]?.[layer];
-          if (!renderLayer) continue;
-
-          const isAbovePlayer =
-            layer > this.player.layer && depthLayer >= this.player.depthLayer;
-
-          for (const tile of renderLayer.tiles) {
-            const isWithinRange =
-              Math.abs(tile.x + 16 - this.player.x) < 64 &&
-              Math.abs(tile.y + 64 - this.player.y) < 64;
-
-            if (isAbovePlayer && isWithinRange) {
-              this.abovePlayerContainer.addChild(tile);
-              renderLayer.renderLayer.attach(this.abovePlayerContainer);
-            } else {
-              this.tileContainer.addChild(tile);
-              renderLayer.renderLayer.attach(tile);
-            }
-          }
-        }
-      }
-    });
-    worldTicker.start();
   }
 
   /** Handle click events */
   onpointerup = (e: FederatedPointerEvent) => {
     // Ignore non-primary clicks
-    if (e.button !== 0) return;
+    if (e.button !== 0 || !this.player) return;
     e.stopPropagation();
 
     // Capture and round global (screen) point
@@ -173,55 +171,56 @@ export class World extends Container {
       y: Math.floor(worldPoint.y),
     };
 
-    this.server.socket.emit("player:move", desiredPosition);
+    // this.server.socket.emit("player:move", desiredPosition);
 
-    // const validTile = getWalkableTileAt({
-    //   player: this.player,
-    //   point: desiredPosition,
-    //   tiles: this.tiles,
-    // });
+    const validTile = getWalkableTileAt({
+      player: this.player,
+      point: desiredPosition,
+      tiles: this.tiles,
+    });
 
-    // if (!validTile) return;
+    if (!validTile) return;
 
-    // // Run pathfinding algorithm
-    // const fromPoint = isometricToCartesian(this.player.position, {
-    //   tileRatio: this.pathfindingGridRatio,
-    // });
-    // const toPoint = isometricToCartesian(desiredPosition, {
-    //   tileRatio: this.pathfindingGridRatio,
-    // });
+    // Run pathfinding algorithm
+    const fromPoint = isometricToCartesian(this.player.position, {
+      tileRatio: this.pathfindingGridRatio,
+    });
+    const toPoint = isometricToCartesian(desiredPosition, {
+      tileRatio: this.pathfindingGridRatio,
+    });
+    console.log(
+      `Attempting to pathfind from ${toTextPoint(fromPoint)} to ${toTextPoint(toPoint)}`,
+    );
+    const ratio = map.width / this.pathfindingGrid.width;
+    const path = findPath({
+      from: fromPoint,
+      to: toPoint,
+      grid: this.pathfindingGrid,
+    });
+
+    if (!path) {
+      console.log(`Unable to find path`);
+      return;
+    }
+
+    // Map to map coordinates
+    const desiredPositions = path.map((point) =>
+      cartesianToIsometric(point, { tileRatio: ratio, withTileOffset: false }),
+    );
+
+    // Set final position to the actual position wanted by the player
+    desiredPositions[desiredPositions.length - 1] = desiredPosition;
+
     // console.log(
-    //   `Attempting to pathfind from ${toTextPoint(fromPoint)} to ${toTextPoint(toPoint)}`,
-    // );
-    // const ratio = map.width / this.pathfindingGrid.width;
-    // const path = findPath({
-    //   from: fromPoint,
-    //   to: toPoint,
-    //   grid: this.pathfindingGrid,
-    // });
-
-    // if (!path) {
-    //   console.log(`Unable to find path`);
-    //   return;
-    // }
-
-    // // Map to map coordinates
-    // const desiredPositions = path.map((point) =>
-    //   cartesianToIsometric(point, { tileRatio: ratio, withTileOffset: false }),
+    //   `Moving to desired position...\nScreen: (${globalPoint.x}, ${globalPoint.y})\nLocal: (${desiredPosition.x}, ${desiredPosition.y})\nTile: (${tilePosition.x}, ${tilePosition.y})`,
     // );
 
-    // // Set final position to the actual position wanted by the player
-    // desiredPositions[desiredPositions.length - 1] = desiredPosition;
-
-    // // console.log(
-    // //   `Moving to desired position...\nScreen: (${globalPoint.x}, ${globalPoint.y})\nLocal: (${desiredPosition.x}, ${desiredPosition.y})\nTile: (${tilePosition.x}, ${tilePosition.y})`,
-    // // );
-
-    // this.player.desiredPositions = desiredPositions;
+    this.player.desiredPositions = desiredPositions;
   };
 
   /** Generate the world's pathfinding grid */
   private generatePathfindingGrid() {
+    if (!this.player) return;
     const ratio = this.pathfindingGridRatio;
     for (let y = 0; y < this.pathfindingGrid.height; y++) {
       for (let x = 0; x < this.pathfindingGrid.width; x++) {
@@ -275,5 +274,44 @@ export class World extends Container {
         gridContainer.addChild(nodeGraphics);
       }
     }
+  }
+
+  /** Create and attach the ticker */
+  private ticker() {
+    const worldTicker = new Ticker();
+    worldTicker.minFPS = 1;
+    worldTicker.maxFPS = 5;
+    worldTicker.add(() => {
+      for (
+        let depthLayer = 0;
+        depthLayer <= this.highestDepthLayer;
+        depthLayer++
+      ) {
+        for (let layer = 0; layer <= this.highestLayer; layer++) {
+          const renderLayer = this.renderLayers[depthLayer]?.[layer];
+          if (!renderLayer) continue;
+
+          const player = this.player ?? { layer: 1, depthLayer: 1, x: 0, y: 0 };
+
+          const isAbovePlayer =
+            layer > player.layer && depthLayer >= player.depthLayer;
+
+          for (const tile of renderLayer.tiles) {
+            const isWithinRange =
+              Math.abs(tile.x + 16 - player.x) < 64 &&
+              Math.abs(tile.y + 64 - player.y) < 64;
+
+            if (isAbovePlayer && isWithinRange) {
+              this.abovePlayerContainer.addChild(tile);
+              renderLayer.renderLayer.attach(this.abovePlayerContainer);
+            } else {
+              this.tileContainer.addChild(tile);
+              renderLayer.renderLayer.attach(tile);
+            }
+          }
+        }
+      }
+    });
+    worldTicker.start();
   }
 }

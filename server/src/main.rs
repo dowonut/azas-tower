@@ -68,6 +68,7 @@ async fn on_connect(
             socket.id.as_str(),
             User {
                 name: format!("anon-{}", socket.id),
+                position: Point(0, 128),
                 ..Default::default()
             },
         )

@@ -2,6 +2,7 @@ import { AssetPack, type AssetPackConfig } from "@assetpack/core";
 import { pixiPipes } from "@assetpack/core/pixi";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin, type ResolvedConfig } from "vite";
+import glsl from "vite-plugin-glsl";
 
 function assetpackPlugin(): Plugin {
   const apConfig: AssetPackConfig = {
@@ -47,6 +48,7 @@ function assetpackPlugin(): Plugin {
 export default defineConfig({
   plugins: [
     assetpackPlugin(),
+    glsl(),
     react({
       babel: {
         plugins: [["babel-plugin-react-compiler"]],

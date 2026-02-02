@@ -2,8 +2,19 @@ import {
   Application,
   Assets,
   Container,
+  FederatedPointerEvent,
+  Filter,
+  FilterSystem,
+  Geometry,
+  GlProgram,
+  Matrix,
+  Mesh,
+  Shader,
+  Sprite,
   TextStyle,
+  Texture,
   TextureStyle,
+  UniformGroup,
 } from "pixi.js";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -17,6 +28,8 @@ import { Player } from "./lib/classes/player.ts";
 import { World } from "./lib/classes/world.ts";
 import { handlePlayerMovement } from "./lib/handlers/handle-player-movement.ts";
 import { Server } from "./lib/classes/server.ts";
+import { parseTileset } from "./lib/functions/parse-tileset.ts";
+import { NormalFilter } from "./lib/classes/normal-filter.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -31,7 +44,7 @@ createRoot(document.getElementById("root")!).render(
   // Create Application
   const app = new Application();
   await app.init({
-    preference: "webgpu",
+    preference: "webgl",
     antialias: false,
     // autoDensity: true,
     // resolution: devicePixelRatio || 1,
@@ -76,8 +89,8 @@ createRoot(document.getElementById("root")!).render(
     clampZoom: {
       minWidth: 200,
       minHeight: 200,
-      maxWidth: 3000,
-      maxHeight: 3000,
+      maxWidth: 5000,
+      maxHeight: 5000,
     },
   });
   stage.addChild(viewport);
@@ -92,17 +105,27 @@ createRoot(document.getElementById("root")!).render(
   viewport.addChild(worldContainer);
 
   // Create world
-  const world = new World();
+  const world = new World({ server });
+
+  // const normalWorld = new World({ server, renderNormals: true });
+  // const normalWorldTexture = renderer.generateTexture(normalWorld);
+  // const worldFilter = new NormalFilter({ normalTexture: normalWorldTexture });
+  // world.filters = worldFilter;
+
+  // app.stage.eventMode = "static";
+  // app.stage.onmousemove = (e: FederatedPointerEvent) => {
+  //   const point = world.toLocal(e);
+  //   const x = point.x + world.width / 2;
+  //   const y = point.y;
+  //   const normalX = x / world.width;
+  //   const normalY = y / world.height;
+  //   worldFilter.uniforms.uLight[0] = normalX;
+  //   worldFilter.uniforms.uLight[1] = normalY;
+  // };
 
   // Create player
   const player = new Player({ world });
-  await player.init();
-
-  // const player2 = new Player({ world, x: 64, y: 16 * 6 });
-  // await player2.init();
-
-  // Initialize world after player
-  await world.init({ player, server });
+  world.attachEntity({ entity: player, isPlayer: true });
 
   // Creat move indicator
   const moveIndicator = await MoveIndicator.init({ player });
@@ -112,7 +135,6 @@ createRoot(document.getElementById("root")!).render(
     label: "entityContainer",
   });
   entityContainer.addChild(player);
-  // entityContainer.addChild(player2);
 
   // Add children to container
   worldContainer.addChild(world);
@@ -138,7 +160,7 @@ createRoot(document.getElementById("root")!).render(
   // Add global tickers
   app.ticker.add((ticker) => {
     // Handle player movement
-    // handlePlayerMovement({ player, world, ticker });
+    handlePlayerMovement({ player, world, ticker });
   });
 
   // Connect to the server once the entire client has initialized
@@ -149,8 +171,8 @@ createRoot(document.getElementById("root")!).render(
     if (!server.socket.id) return;
     const user = state.users[server.socket.id];
     player.label = user.name;
-    player.x = user.position[0];
-    player.y = user.position[1];
+    // player.x = user.position[0];
+    // player.y = user.position[1];
 
     // Iterate through users
     for (const [id, user] of Object.entries(state.users)) {
@@ -166,14 +188,13 @@ createRoot(document.getElementById("root")!).render(
           x: user.position[0],
           y: user.position[1],
         });
-        await newPlayer.init();
         entityContainer.addChild(newPlayer);
       }
       // Update player
       else {
         player.label = user.name;
-        player.x = user.position[0];
-        player.y = user.position[1];
+        // player.x = user.position[0];
+        // player.y = user.position[1];
       }
     }
 

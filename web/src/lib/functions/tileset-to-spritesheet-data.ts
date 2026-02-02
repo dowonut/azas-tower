@@ -1,14 +1,22 @@
 import type { SpritesheetData } from "pixi.js";
 import type { Tileset } from "../types/tiled";
 
+export type MinimumTileset = {
+  columns: number;
+  tilewidth: number;
+  tileheight: number;
+  tilecount: number;
+  tiles?: Tileset["tiles"];
+};
+
 /**
  * Convert a Tiled tileset to Spritesheet object data
  */
-export async function tilesetToSpritesheetData({
+export function tilesetToSpritesheetData({
   tileset,
 }: {
-  tileset: Tileset;
-}): Promise<SpritesheetData> {
+  tileset: MinimumTileset;
+}): SpritesheetData {
   const { columns, tilewidth, tileheight } = tileset;
 
   let frames: SpritesheetData["frames"] = {};

@@ -1,6 +1,7 @@
 import {
   AnimatedSprite,
   Container,
+  Sprite,
   Ticker,
   type AnimatedSpriteOptions,
   type ContainerOptions,
@@ -12,14 +13,14 @@ import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 
 export type EntityOptions = ContainerOptions & {
   world: World;
-  sprite?: AnimatedSpriteOptions;
+  sprite: SpriteOptions;
 };
 
 /**
  * A game world entity
  */
 export class Entity extends Container {
-  sprite: AnimatedSprite;
+  sprite!: Sprite;
   world: World;
   layer: number = 1;
 
@@ -27,9 +28,7 @@ export class Entity extends Container {
     super(options);
     this.world = world;
 
-    const sprite = new AnimatedSprite(spriteOptions as AnimatedSpriteOptions);
-    this.sprite = sprite;
-    this.addChild(sprite);
+    this.createSprite(spriteOptions);
 
     const entityTicker = new Ticker();
     entityTicker.maxFPS = 30;
@@ -41,6 +40,12 @@ export class Entity extends Container {
     });
 
     entityTicker.start();
+  }
+
+  createSprite(options: SpriteOptions) {
+    const sprite = new PerfectSprite(options);
+    this.sprite = sprite;
+    this.addChild(sprite);
   }
 
   get tilePosition() {
