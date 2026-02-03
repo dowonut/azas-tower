@@ -1,40 +1,33 @@
-import {
-  Assets,
-  Graphics,
-  Text,
-  Texture,
-  Ticker,
-  type PointData,
-} from "pixi.js";
-import { Entity, type EntityOptions } from "./entity";
-import type { WorldTile } from "./world-tile";
-import { parseTileset } from "../functions/parse-tileset";
+import { Graphics, Text, Texture, Ticker, type PointData } from "pixi.js";
 import tileset from "../../assets/tilesets/character-tileset.json";
+import { parseTileset } from "../functions/parse-tileset";
+import type { Heading } from "../types";
 import { AnimatedEntity, type AnimatedEntityOptions } from "./animated-entity";
-import type { CardinalDirection, Direction } from "../types";
+import { type EntityOptions } from "./entity";
+import type { WorldTile } from "./world-tile";
 
-type PlayerEntityOptions = EntityOptions;
+type PlayerEntityOptions = AnimatedEntityOptions;
 
 export type PlayerOptions = Omit<PlayerEntityOptions, "sprite">;
 
-export class Player extends Entity {
+export class Player extends AnimatedEntity {
   debugText: Text;
   isHovered: boolean = false;
   desiredPositions: PointData[] = [];
   tile?: WorldTile;
 
-  public headingTextures: { [key in CardinalDirection]: Texture };
-
   constructor(options: PlayerOptions) {
-    const { animations, textures } = parseTileset({ tileset });
+    const { animations } = parseTileset({ tileset });
 
-    const defaultOptions: EntityOptions = {
+    const defaultOptions: PlayerEntityOptions = {
       eventMode: "static",
       cursor: "pointer",
+      position: { x: 0, y: 0 },
       sprite: {
-        // textures: animations[21],
-        // animationSpeed: 0.02,
-        texture: textures[1],
+        textures: animations[1],
+        animationSpeed: 0.02,
+        autoPlay: true,
+        // texture: textures[1],
         anchor: { x: 0.5, y: 1 },
       },
       ...options,
@@ -42,20 +35,29 @@ export class Player extends Entity {
 
     super(defaultOptions);
 
-    // Set heading textures
-    this.headingTextures = {
-      N: textures[2],
-      NE: textures[1],
-      E: textures[8],
-      SE: textures[7],
-      S: textures[6],
-      SW: textures[5],
-      W: textures[4],
-      NW: textures[3],
-    };
-
-    // Start playing animation
-    // this.sprite.play();
+    // Set animations
+    this.setStateTextures({
+      idle: {
+        N: animations[1],
+        NE: animations[3],
+        E: animations[5],
+        SE: animations[7],
+        S: animations[9],
+        SW: animations[11],
+        W: animations[13],
+        NW: animations[15],
+      },
+      walking: {
+        N: animations[21],
+        NE: animations[23],
+        E: animations[25],
+        SE: animations[27],
+        S: animations[29],
+        SW: animations[31],
+        W: animations[33],
+        NW: animations[35],
+      },
+    });
 
     // Render shadow
     const shadowSize = 10;

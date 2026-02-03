@@ -127,6 +127,9 @@ createRoot(document.getElementById("root")!).render(
   const player = new Player({ world });
   world.attachEntity({ entity: player, isPlayer: true });
 
+  const player1 = new Player({ world, label: `dummy-spin` });
+  world.attachEntity({ entity: player1 });
+
   // Creat move indicator
   const moveIndicator = await MoveIndicator.init({ player });
 
@@ -135,6 +138,7 @@ createRoot(document.getElementById("root")!).render(
     label: "entityContainer",
   });
   entityContainer.addChild(player);
+  entityContainer.addChild(player1);
 
   // Add children to container
   worldContainer.addChild(world);
@@ -200,7 +204,10 @@ createRoot(document.getElementById("root")!).render(
 
     // Clean up disconnected users
     entityContainer.children.forEach((entity) => {
-      if (!Object.values(state.users).some((x) => x.name === entity.label))
+      if (
+        !Object.values(state.users).some((x) => x.name === entity.label) &&
+        !entity.label.startsWith(`dummy`)
+      )
         entity.destroy({ children: true });
     });
   });

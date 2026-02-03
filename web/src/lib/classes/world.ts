@@ -23,6 +23,7 @@ import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 import { cartesianToIsometric } from "../functions/cartesian-to-isometric";
 import type { Server } from "./server";
 import type { Entity } from "./entity";
+import type { AnimatedEntity } from "./animated-entity";
 
 export type WorldOptions = {
   server: Server;
@@ -99,7 +100,7 @@ export class World extends Container {
     entity: Entity;
     isPlayer?: boolean;
   }) {
-    if (isPlayer) this.player = entity as Player;
+    if (isPlayer && entity instanceof Player) this.player = entity;
   }
 
   /** Create and attach tiles */

@@ -12,7 +12,7 @@ export class AnimatedEntity extends Entity {
     super(options);
   }
 
-  createSprite(options: AnimatedSpriteOptions) {
+  protected createSprite(options: AnimatedSpriteOptions) {
     const sprite = new AnimatedSprite(options);
     this.sprite = sprite;
     this.addChild(sprite);

@@ -50,6 +50,7 @@ export function handlePlayerMovement({
     const roundedPosition = { x: round(x), y: round(y) };
     player.desiredPositions.splice(0, 1);
     player.position.set(roundedPosition.x, roundedPosition.y);
+    player.updateState("idle");
     if (player.desiredPositions.length < 1) {
       console.log("Arrived at destination:", roundedPosition, tilePosition);
     }
@@ -57,7 +58,7 @@ export function handlePlayerMovement({
   }
 
   // Calculate relative movement
-  const speed = 1;
+  const speed = 0.5;
   let moveX = (dx / distance) * speed;
   let moveY = (dy / distance) * speed;
 
@@ -71,7 +72,7 @@ export function handlePlayerMovement({
 
   // Get the player's current heading
   const heading = vectorToDirection({ x: moveX, y: moveY });
-  player.sprite.texture = player.headingTextures[heading];
+  player.updateState("walking", heading);
 
   // Normalize according to delta time
   moveX *= ticker.elapsedMS / 8;

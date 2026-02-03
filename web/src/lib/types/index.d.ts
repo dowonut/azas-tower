@@ -16,12 +16,4 @@ export type RenderLayers = {
 export type WorldPoint = { x: number; y: number; z: number };
 
 /** A cardinal direction */
-export type CardinalDirection =
-  | "N"
-  | "NE"
-  | "E"
-  | "SE"
-  | "S"
-  | "SW"
-  | "W"
-  | "NW";
+export type Heading = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
