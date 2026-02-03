@@ -30,6 +30,7 @@ import { handlePlayerMovement } from "./lib/handlers/handle-player-movement.ts";
 import { Server } from "./lib/classes/server.ts";
 import { parseTileset } from "./lib/functions/parse-tileset.ts";
 import { NormalFilter } from "./lib/classes/normal-filter.ts";
+import type { EntityAnimation } from "./lib/classes/entity.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -127,9 +128,6 @@ createRoot(document.getElementById("root")!).render(
   const player = new Player({ world });
   world.attachEntity({ entity: player, isPlayer: true });
 
-  const player1 = new Player({ world, label: `dummy-spin` });
-  world.attachEntity({ entity: player1 });
-
   // Creat move indicator
   const moveIndicator = await MoveIndicator.init({ player });
 
@@ -138,7 +136,26 @@ createRoot(document.getElementById("root")!).render(
     label: "entityContainer",
   });
   entityContainer.addChild(player);
-  entityContainer.addChild(player1);
+
+  // Create dummy players
+  const states: EntityAnimation[] = ["idle", "walking"] as const;
+  const headings = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] as const;
+  for (let j = 0; j < states.length; j++) {
+    const state = states[j];
+    for (let i = 0; i < headings.length; i++) {
+      const heading = headings[i];
+      const dummyPlayer = new Player({
+        world,
+        label: `dummy${j}${i}`,
+        heading,
+        state,
+        position: { x: i * 32, y: j * 32 },
+        showDisplayName: false,
+      });
+      world.attachEntity({ entity: dummyPlayer });
+      entityContainer.addChild(dummyPlayer);
+    }
+  }
 
   // Add children to container
   worldContainer.addChild(world);

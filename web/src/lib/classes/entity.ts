@@ -2,6 +2,7 @@ import {
   AnimatedSprite,
   Container,
   Sprite,
+  Text,
   Texture,
   Ticker,
   type AnimatedSpriteOptions,
@@ -24,6 +25,10 @@ type StateTextureOptions = { state: EntityAnimation } & (
 export type EntityOptions = ContainerOptions & {
   world: World;
   sprite: SpriteOptions;
+  heading?: Heading;
+  state?: EntityAnimation;
+  /** @default true */
+  showDisplayName?: boolean;
 };
 
 /**
@@ -33,6 +38,8 @@ export class Entity extends Container {
   sprite!: Sprite;
   world: World;
   layer: number = 1;
+
+  protected displayName: Text;
 
   protected _state: EntityAnimation = "idle";
   protected _heading: Heading = "N";
@@ -46,11 +53,47 @@ export class Entity extends Container {
     };
   } = {};
 
-  constructor({ world, sprite: spriteOptions, ...options }: EntityOptions) {
+  constructor({
+    world,
+    sprite: spriteOptions,
+    heading,
+    state,
+    showDisplayName = true,
+    ...options
+  }: EntityOptions) {
     super(options);
     this.world = world;
+    if (heading) this._heading = heading;
+    if (state) this._state = state;
 
     this.createSprite(spriteOptions);
+
+    const text = () => this.label ?? "N/A";
+    // const text = () => `${this.layer}:${this.depthLayer}`;
+    // const text = () =>
+    //   `${this.tile?.tilePosition.x}, ${this.tile?.tilePosition.y}`;
+
+    const displayName = new Text({
+      text: text(),
+      style: { fill: "orange" },
+      scale: 0.3,
+      anchor: 0.5,
+      x: 0,
+      y: -40,
+      alpha: 0.8,
+      visible: false,
+    });
+    this.displayName = displayName;
+    this.addChild(displayName);
+
+    const displayNameTicker = new Ticker();
+    displayNameTicker.minFPS = 1;
+    displayNameTicker.maxFPS = 5;
+    displayNameTicker.add((_) => {
+      this.displayName.text = text();
+      this.displayName.visible = showDisplayName;
+    });
+    displayNameTicker.start();
 
     const entityTicker = new Ticker();
     entityTicker.maxFPS = 30;
@@ -127,19 +170,19 @@ export class Entity extends Container {
   }
 
   /** Update the entity's texture given a new state */
-  public updateState(state: EntityAnimation, heading?: Heading) {
+  public updateState(state?: EntityAnimation, heading?: Heading) {
     const animationSpeed = {
       idle: 0.02,
       walking: 0.06,
     };
     if (this.heading === heading && this.state === state) return;
     if (heading) this._heading = heading;
-    this._state = state;
+    if (state) this._state = state;
     const texture = this.getStateTexture(state, heading);
     const isArray = Array.isArray(texture);
     if (this instanceof AnimatedEntity) {
       this.sprite.textures = isArray ? texture : [texture];
-      this.sprite.animationSpeed = animationSpeed[state];
+      this.sprite.animationSpeed = animationSpeed[this._state];
       this.sprite.play();
     } else {
       this.sprite.texture = isArray ? texture[0] : texture;

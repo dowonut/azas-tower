@@ -5,13 +5,13 @@ import type { Heading } from "../types";
 import { AnimatedEntity, type AnimatedEntityOptions } from "./animated-entity";
 import { type EntityOptions } from "./entity";
 import type { WorldTile } from "./world-tile";
+import { AdjustmentFilter } from "pixi-filters";
 
 type PlayerEntityOptions = AnimatedEntityOptions;
 
 export type PlayerOptions = Omit<PlayerEntityOptions, "sprite">;
 
 export class Player extends AnimatedEntity {
-  debugText: Text;
   isHovered: boolean = false;
   desiredPositions: PointData[] = [];
   tile?: WorldTile;
@@ -22,13 +22,19 @@ export class Player extends AnimatedEntity {
     const defaultOptions: PlayerEntityOptions = {
       eventMode: "static",
       cursor: "pointer",
-      position: { x: 0, y: 0 },
+      position: { x: 0, y: 16 * 8 },
       sprite: {
         textures: animations[1],
         animationSpeed: 0.02,
         autoPlay: true,
         // texture: textures[1],
         anchor: { x: 0.5, y: 1 },
+        // filters: new AdjustmentFilter({
+        //   brightness: 1.2,
+        //   red: 1.3,
+        //   green: 0.9,
+        //   blue: 0.7,
+        // }),
       },
       ...options,
     };
@@ -59,6 +65,9 @@ export class Player extends AnimatedEntity {
       },
     });
 
+    // Set texture
+    this.updateState();
+
     // Render shadow
     const shadowSize = 10;
     const shadow = new Graphics()
@@ -67,23 +76,6 @@ export class Player extends AnimatedEntity {
     shadow.y = -(shadowSize / 2);
     shadow.x = 2;
     this.addChildAt(shadow, 0);
-
-    const text = () => this.label ?? "N/A";
-    // const text = () => `${this.layer}:${this.depthLayer}`;
-    // const text = () =>
-    //   `${this.tile?.tilePosition.x}, ${this.tile?.tilePosition.y}`;
-
-    const debugText = new Text({
-      text: text(),
-      style: { fill: "orange" },
-      scale: 0.3,
-      anchor: 0.5,
-      x: 0,
-      y: -50,
-      alpha: 0.8,
-    });
-    this.debugText = debugText;
-    this.addChild(debugText);
 
     this.onpointerover = () => {
       this.isHovered = true;
@@ -94,13 +86,5 @@ export class Player extends AnimatedEntity {
       this.isHovered = false;
       this.tint = 0xffffff;
     };
-
-    const debugTicker = new Ticker();
-    debugTicker.minFPS = 1;
-    debugTicker.maxFPS = 5;
-    debugTicker.add((_) => {
-      this.debugText.text = text();
-    });
-    debugTicker.start();
   }
 }
