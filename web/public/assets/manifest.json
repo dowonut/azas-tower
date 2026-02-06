@@ -110,6 +110,18 @@
         },
         {
           "alias": [
+            "icons/tower-icon-shaded.png",
+            "tower-icon-shaded.png"
+          ],
+          "src": [
+            "icons/tower-icon-shaded-bcd0ag.png"
+          ],
+          "data": {
+            "tags": {}
+          }
+        },
+        {
+          "alias": [
             "sheets/animated-tileset.png",
             "animated-tileset.png"
           ],
@@ -162,7 +174,7 @@
             "character-tileset.png"
           ],
           "src": [
-            "sheets/character-tileset-nl3xaA.png"
+            "sheets/character-tileset-VU6u-w.png"
           ],
           "data": {
             "tags": {}
@@ -175,6 +187,18 @@
           ],
           "src": [
             "sheets/walkable-tileset-6gsLpA.png"
+          ],
+          "data": {
+            "tags": {}
+          }
+        },
+        {
+          "alias": [
+            "logos/tower-logo-960.png",
+            "tower-logo-960.png"
+          ],
+          "src": [
+            "logos/tower-logo-960-nXrEzQ.png"
           ],
           "data": {
             "tags": {}

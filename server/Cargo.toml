@@ -15,3 +15,4 @@ http = "1.4.0"
 tower = "0.5.3"
 serde = { version = "1.0", features = ["derive", "rc"] }
 chron = "0.1.6"
+bevy_ecs = "0.18.0"

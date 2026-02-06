@@ -1,4 +1,11 @@
-import { Graphics, Text, Texture, Ticker, type PointData } from "pixi.js";
+import {
+  extensions,
+  Graphics,
+  Text,
+  Texture,
+  Ticker,
+  type PointData,
+} from "pixi.js";
 import tileset from "../../assets/tilesets/character-tileset.json";
 import { parseTileset } from "../functions/parse-tileset";
 import type { Heading } from "../types";
@@ -27,13 +34,13 @@ export class Player extends AnimatedEntity {
         textures: animations[1],
         animationSpeed: 0.02,
         autoPlay: true,
-        // texture: textures[1],
         anchor: { x: 0.5, y: 1 },
+        // texture: textures[1],
         // filters: new AdjustmentFilter({
-        //   brightness: 1.2,
-        //   red: 1.3,
-        //   green: 0.9,
-        //   blue: 0.7,
+        //   brightness: 1.5,
+        //   red: 1.0,
+        //   green: 0.66,
+        //   blue: 0.57,
         // }),
       },
       ...options,
