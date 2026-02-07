@@ -74,54 +74,6 @@
         },
         {
           "alias": [
-            "icons/tower-icon-160.png",
-            "tower-icon-160.png"
-          ],
-          "src": [
-            "icons/tower-icon-160-prRb8Q.png"
-          ],
-          "data": {
-            "tags": {}
-          }
-        },
-        {
-          "alias": [
-            "icons/tower-icon-32.png",
-            "tower-icon-32.png"
-          ],
-          "src": [
-            "icons/tower-icon-32-77kkkw.png"
-          ],
-          "data": {
-            "tags": {}
-          }
-        },
-        {
-          "alias": [
-            "icons/tower-icon-320.png",
-            "tower-icon-320.png"
-          ],
-          "src": [
-            "icons/tower-icon-320-Km8DsQ.png"
-          ],
-          "data": {
-            "tags": {}
-          }
-        },
-        {
-          "alias": [
-            "icons/tower-icon-shaded.png",
-            "tower-icon-shaded.png"
-          ],
-          "src": [
-            "icons/tower-icon-shaded-bcd0ag.png"
-          ],
-          "data": {
-            "tags": {}
-          }
-        },
-        {
-          "alias": [
             "sheets/animated-tileset.png",
             "animated-tileset.png"
           ],
@@ -187,18 +139,6 @@
           ],
           "src": [
             "sheets/walkable-tileset-6gsLpA.png"
-          ],
-          "data": {
-            "tags": {}
-          }
-        },
-        {
-          "alias": [
-            "logos/tower-logo-960.png",
-            "tower-logo-960.png"
-          ],
-          "src": [
-            "logos/tower-logo-960-VcRrug.png"
           ],
           "data": {
             "tags": {}
