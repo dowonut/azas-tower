@@ -20,9 +20,15 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": false,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Path aliases */
+    "paths": {
+      "@classes/*": ["./src/lib/classes/*"],
+      "@generated/*": ["./generated/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "generated"]
 }

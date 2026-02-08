@@ -3,6 +3,7 @@ import { pixiPipes } from "@assetpack/core/pixi";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin, type ResolvedConfig } from "vite";
 import glsl from "vite-plugin-glsl";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 function assetpackPlugin(): Plugin {
   const apConfig: AssetPackConfig = {
@@ -47,6 +48,7 @@ function assetpackPlugin(): Plugin {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    tsconfigPaths(),
     assetpackPlugin(),
     glsl(),
     react({

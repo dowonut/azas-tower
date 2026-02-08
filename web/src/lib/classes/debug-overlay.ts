@@ -10,6 +10,7 @@ import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 import { toTextPoint } from "../functions/to-text-point";
 import type { World } from "./world";
 import type { Server } from "./server";
+import type { Game } from "./game";
 
 export class DebugOverlay extends Container {
   debugText: Text;
@@ -27,16 +28,10 @@ export class DebugOverlay extends Container {
   };
 
   constructor({
-    ticker,
-    world,
-    server,
-    worldContainer,
+    game,
     ...options
   }: ContainerOptions & {
-    ticker: Ticker;
-    world: World;
-    server: Server;
-    worldContainer: Container;
+    game: Game;
   }) {
     super(options);
 
@@ -50,7 +45,7 @@ export class DebugOverlay extends Container {
     this.addChild(debugText);
 
     // Handle world mouse movement
-    worldContainer.onglobalmousemove = (e: FederatedPointerEvent) => {
+    game.worldContainer.onglobalmousemove = (e: FederatedPointerEvent) => {
       // Capture and round global (screen) point
       const globalPoint = {
         x: Math.round(e.globalX),
@@ -58,7 +53,8 @@ export class DebugOverlay extends Container {
       };
 
       // Convert to local point within the map
-      const worldPoint = worldContainer.toLocal(globalPoint) || globalPoint;
+      const worldPoint =
+        game.worldContainer.toLocal(globalPoint) || globalPoint;
 
       // Round local position
       const roundedPosition = {
@@ -71,7 +67,7 @@ export class DebugOverlay extends Container {
 
       // Calculate pathfinding grid position
       const pathfindingGridPosition = isometricToCartesian(roundedPosition, {
-        tileRatio: world.pathfindingGridRatio,
+        tileRatio: game.world.pathfindingGridRatio,
       });
 
       this.mouse.screen = globalPoint;
@@ -83,8 +79,8 @@ export class DebugOverlay extends Container {
 
     // Regularly ping server to set latency
     setInterval(() => {
-      if (server.socket.connected) {
-        server.ping().then((ping) => (this.ping = `${ping}ms`));
+      if (game.server.socket.connected) {
+        game.server.ping().then((ping) => (this.ping = `${ping}ms`));
       } else {
         this.ping = "NO CONNECTION";
       }
@@ -94,7 +90,7 @@ export class DebugOverlay extends Container {
     debugTicker.minFPS = 1;
     debugTicker.maxFPS = 10;
     debugTicker.add(async (_) => {
-      const fpsDisplay = Math.round(ticker.FPS);
+      const fpsDisplay = Math.round(game.app.ticker.FPS);
       this.debugText.text = `FPS: ${fpsDisplay}
 Ping: ${this.ping}
 Mouse (Screen): ${toTextPoint(this.mouse.screen)}

@@ -8,7 +8,9 @@ import {
   type FillInput,
   type TextStyleOptions,
 } from "pixi.js";
-import type { Server, ServerMessage } from "./server";
+import type { Server } from "@classes/server";
+import { MessageAuthorType, type ServerMessage } from "@generated/server";
+import type { Game } from "./game";
 
 export class GameConsole extends Container {
   private MARGIN = 10;
@@ -24,15 +26,15 @@ export class GameConsole extends Container {
     textBaseline: "ideographic",
   };
 
-  app: Application;
+  game: Game;
   messageContainer: Container;
   messages: ServerMessage[] = [];
   input: Input & { bg: Graphics };
 
-  constructor({ app, server }: { app: Application; server: Server }) {
+  constructor({ game }: { game: Game }) {
     super();
 
-    this.app = app;
+    this.game = game;
 
     // Create message container
     // This is the actual container containing all visible console messages
@@ -59,12 +61,12 @@ export class GameConsole extends Container {
     // Cast as any because input will always have a Graphics background
     this.input = _input as any;
     this.input.x = this.MARGIN;
-    this.input.y = this.app.screen.height - inputHeight - this.MARGIN;
+    this.input.y = this.game.app.screen.height - inputHeight - this.MARGIN;
     this.input.onEnter.connect((value) => {
       if (!value) return;
 
       // Send the typed message to the server
-      server.sendMessage({
+      this.game.server.sendMessage({
         content: value,
       });
 
@@ -72,11 +74,12 @@ export class GameConsole extends Container {
     });
     this.addChild(this.input);
 
-    // Listen to messages from the server
-    server.onMessage((message) => {
-      console.log(`Console received a message:`, message);
-      this.addMessage(message);
-    });
+    // // Listen to messages from the server
+    // this.game.server.onMessages((messages) => {
+    //   console.log(`Console received messages:`, messages);
+    //   this.replaceMessages(messages);
+    //   // this.addMessage(...messages);
+    // });
   }
 
   /** Trigger the console to render */
@@ -89,8 +92,7 @@ export class GameConsole extends Container {
     if (visibleMessages.length > this.MAX_MESSAGES) {
       visibleMessages = visibleMessages.slice(-this.MAX_MESSAGES);
       visibleMessages.unshift({
-        authorType: "other",
-        authorName: null,
+        authorType: MessageAuthorType.Other,
         content: "...",
       });
     }
@@ -102,7 +104,7 @@ export class GameConsole extends Container {
 
     // Move container
     this.messageContainer.y =
-      this.app.screen.height - consoleHeight - margin - this.input.height;
+      this.game.app.screen.height - consoleHeight - margin - this.input.height;
     this.messageContainer.x = 0 + margin;
 
     // Create messages
@@ -161,6 +163,13 @@ export class GameConsole extends Container {
     for (const message of messages) {
       this.messages.push(message);
     }
+
+    this.render();
+  }
+
+  /** Replace all messages in the console */
+  replaceMessages(messages: ServerMessage[]) {
+    this.messages = messages;
 
     this.render();
   }

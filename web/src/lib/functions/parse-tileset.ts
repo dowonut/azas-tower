@@ -38,6 +38,5 @@ export function parseTileset(options: ParseTilesetOptions) {
   const sheetTexture = Texture.from(`sheets/${tilesetName}.png`);
   const sheet = new Spritesheet(sheetTexture, spritesheetData);
   sheet.parse();
-  console.log(sheet.data);
   return sheet;
 }

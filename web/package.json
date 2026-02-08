@@ -4,10 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run generate",
     "dev": "vite",
+    "prebuild": "npm run generate",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate": "typeshare ../server/src -l typescript -o ./generated/server.ts"
   },
   "dependencies": {
     "@pixi/ui": "^2.3.2",
@@ -20,6 +23,7 @@
     "react-dom": "^19.2.0",
     "react-hotkeys-hook": "^5.2.1",
     "socket.io-client": "^4.8.3",
+    "vite-tsconfig-paths": "^6.1.0",
     "zustand": "^5.0.10"
   },
   "devDependencies": {

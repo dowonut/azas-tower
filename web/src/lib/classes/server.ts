@@ -1,22 +1,17 @@
+import type {
+  ClientMessage,
+  ClientSyncPacket,
+  GameState,
+  ServerMessage,
+} from "@generated/server.ts";
 import type { PointData } from "pixi.js";
 import { io, type Socket } from "socket.io-client";
-import type { GameState } from "../types/server";
-
-export type ServerMessageAuthorType = "user" | "server" | "other";
-
-export type ServerMessage = {
-  authorType: ServerMessageAuthorType;
-  authorName: string | null;
-  content: string;
-};
-
-export type ClientMessage = {
-  content: string;
-};
 
 export type ServerToClientEvents = {
   message: (message: ServerMessage) => void;
+  messages: (messages: ServerMessage[]) => void;
   state: (state: GameState) => void;
+  sync: (sync: ClientSyncPacket) => void;
 };
 
 export type ClientToServerEvents = {
@@ -66,6 +61,11 @@ export class Server {
     return this.socket.on("message", callback);
   }
 
+  /** Listen to messages from the server */
+  onMessages(callback: ServerToClientEvents["messages"]) {
+    return this.socket.on("messages", callback);
+  }
+
   /** Send a message to the server */
   sendMessage(...data: Parameters<ClientToServerEvents["message"]>) {
     return this.socket.emit("message", ...data);
@@ -74,5 +74,10 @@ export class Server {
   /** Listen to game state changes from the server */
   onState(callback: ServerToClientEvents["state"]) {
     return this.socket.on("state", callback);
+  }
+
+  /** Listen to sync events from the server */
+  onSync(callback: ServerToClientEvents["sync"]) {
+    return this.socket.on("sync", callback);
   }
 }

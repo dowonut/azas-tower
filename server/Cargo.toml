@@ -1,5 +1,5 @@
 [package]
-name = "server"
+name = "azas-tower-server"
 version = "0.1.0"
 edition = "2024"
 
@@ -15,4 +15,16 @@ http = "1.4.0"
 tower = "0.5.3"
 serde = { version = "1.0", features = ["derive", "rc"] }
 chron = "0.1.6"
-bevy_ecs = "0.18.0"
+bevy = { version = "0.18.0", default-features = false, features = [
+    "dev",
+    "async_executor",
+    "bevy_asset",
+    "bevy_log",
+    "bevy_state",
+    "reflect_auto_register",
+    "dynamic_linking",
+    "multi_threaded",
+    "serialize",
+] }
+crossbeam-channel = "0.5.15"
+typeshare = "1.0.5"

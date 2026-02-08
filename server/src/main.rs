@@ -6,10 +6,12 @@
     clippy::pedantic
 )]
 
-// use std::num::NonZeroU32;
+use std::time::Duration;
 
 use axum::routing::get;
-use bevy_ecs::{prelude::World, schedule::Schedule};
+use bevy::DefaultPlugins;
+use bevy::app::{App, PluginGroup, ScheduleRunnerPlugin};
+use bevy::log::LogPlugin;
 use socketioxide::SocketIo;
 use tower::ServiceBuilder;
 use tower_http::cors::CorsLayer;
@@ -17,69 +19,70 @@ use tracing::info;
 use tracing_subscriber::FmtSubscriber;
 
 mod ecs;
-mod handler;
-mod state;
-mod user;
-mod utility;
+mod plugin;
+mod socket;
 
-use handler::on_connect;
+use crate::ecs::resource::{GameState, SocketChannel, SocketIoResource};
+use crate::plugin::AzasTowerPlugin;
+use crate::socket::{create_socket_event_channel, on_connect};
 
-use crate::ecs::{resource::GameState, system::print_message_system};
+/// The server tick rate in ticks per second
+const TICK_RATE: u8 = 1;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing::subscriber::set_global_default(FmtSubscriber::default())?;
 
-    // Set up socketioxide
+    // ========= Socketioxide =========
 
-    let (layer, io) = SocketIo::builder().req_path("/ws").build_layer();
+    let (socker_tx, socket_rx) = create_socket_event_channel();
+
+    let (layer, io) = SocketIo::builder()
+        .req_path("/ws")
+        .with_state(socker_tx.clone())
+        .build_layer();
 
     io.ns("/", on_connect);
 
-    // Set up chron game loop
+    // ============= Axum =============
 
     tokio::spawn(async move {
-        let mut world = World::new();
+        let cors = CorsLayer::permissive();
 
-        world.insert_resource(GameState::default());
+        let app = axum::Router::new()
+            .route("/", get(async || "Hello, World!"))
+            .layer(ServiceBuilder::new().layer(cors).layer(layer));
 
-        let mut schedule = Schedule::default();
+        info!("Starting server");
 
-        schedule.add_systems(print_message_system);
-
-        schedule.run(&mut world);
-
-        // let updates_per_second = NonZeroU32::new(20).unwrap();
-        // let frames_per_second = NonZeroU32::new(20).unwrap();
-        // let clock = chron::Clock::new(updates_per_second).max_frame_rate(frames_per_second);
-
-        // for tick in clock {
-        //     match tick {
-        //         chron::Tick::Update => {
-        //             // info!("update");
-        //         }
-        //         chron::Tick::Render { interpolation: _ } => {
-        //             // Emit current game state
-        //             // let snapshot = state.get_snapshot().await;
-        //             // io.emit("state", &snapshot).await.ok();
-        //         }
-        //     }
-        //     tokio::task::yield_now().await;
-        // }
+        let listener = tokio::net::TcpListener::bind("0.0.0.0:3004").await.unwrap();
+        axum::serve(listener, app).await.unwrap();
     });
 
-    // Set up axum
+    // ============= Bevy =============
 
-    let cors = CorsLayer::permissive();
+    // Create Bevy app
+    let mut app = App::new();
 
-    let app = axum::Router::new()
-        .route("/", get(async || "Hello, World!"))
-        .layer(ServiceBuilder::new().layer(cors).layer(layer));
+    // Configure app
+    app.init_resource::<GameState>()
+        .insert_resource(SocketIoResource(io.clone()))
+        .insert_resource(SocketChannel(socket_rx))
+        .add_plugins((
+            // Add default plugins
+            DefaultPlugins
+                // Configure the schedule runner to match the server tick rate
+                .set(ScheduleRunnerPlugin::run_loop(Duration::from_secs_f32(
+                    1.0 / TICK_RATE as f32,
+                )))
+                // Disable Bevy's default logging as we are using tracing
+                .disable::<LogPlugin>(),
+            // Add the core AzasTower plugin
+            AzasTowerPlugin,
+        ));
 
-    info!("Starting server");
-
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3004").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    // Start app
+    app.run();
 
     Ok(())
 }
