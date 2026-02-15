@@ -4,6 +4,13 @@
 
 export type ConnectionId = string;
 
+export interface Position {
+	x: number;
+	y: number;
+}
+
+export type DesiredPosition = Position;
+
 export enum MessageAuthorType {
 	Server = "server",
 	User = "user",
@@ -11,6 +18,7 @@ export enum MessageAuthorType {
 }
 
 export interface ServerMessage {
+	id: string;
 	authorType: MessageAuthorType;
 	authorName?: string;
 	content: string;
@@ -27,9 +35,7 @@ export interface GameState {
 	tickCount: number;
 }
 
-export interface Position {
-	x: number;
-	y: number;
+export interface Player {
 }
 
 export enum ConnectionStatus {
@@ -37,21 +43,77 @@ export enum ConnectionStatus {
 	Offline = "offline",
 }
 
-/** Player entity bundle */
-export interface PlayerBundle {
-	name: string;
-	position: Position;
-	connectionStatus: ConnectionStatus;
-	connectionId: ConnectionId;
+export enum RenderType {
+	Animated = "animated",
+	Static = "static",
 }
 
+export interface Renderable {
+	renderType: RenderType;
+	sprite: string;
+}
+
+/** Data about an entity for syncing with clients */
+export interface EntitySyncPacket {
+	player: Player;
+	name: string;
+	position: Position;
+	desiredPosition?: DesiredPosition;
+	connectionId: ConnectionId;
+	connectionStatus: ConnectionStatus;
+	renderable: Renderable;
+}
+
+/** A packet sent to clients containing relevant information for syncing game state */
 export interface ClientSyncPacket {
 	gameState: GameState;
 	globalMessages: ServerMessage[];
-	entities: PlayerBundle[];
+	entities: EntitySyncPacket[];
 }
 
 export interface GameRules {
-	max_players: number;
+	maxPlayers: number;
 }
+
+export interface Offline {
+}
+
+export interface Online {
+}
+
+export interface PlayerMove {
+	x: number;
+	y: number;
+}
+
+export interface PlayerQuery {
+	entity: number;
+	player: Player;
+	name: string;
+	position: Position;
+	desiredPosition?: DesiredPosition;
+	connectionId: ConnectionId;
+	connectionStatus: ConnectionStatus;
+	renderable: Renderable;
+}
+
+export enum ClientServerEvent {
+	Message = "message",
+	Ping = "ping",
+	PlayerMove = "player_move",
+}
+
+export type ClientServerEventData = 
+	| { type: "message", content: ClientMessage }
+	| { type: "ping", content?: undefined }
+	| { type: "player_move", content: PlayerMove };
+
+export enum ServerClientEvent {
+	Message = "message",
+	Sync = "sync",
+}
+
+export type ServerClientEventData = 
+	| { type: "message", content: ServerMessage }
+	| { type: "sync", content: ClientSyncPacket };
 

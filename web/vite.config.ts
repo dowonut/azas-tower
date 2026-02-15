@@ -53,7 +53,10 @@ export default defineConfig({
     glsl(),
     react({
       babel: {
-        plugins: [["babel-plugin-react-compiler"]],
+        parserOpts: {
+          plugins: ["decorators-legacy"],
+        },
+        plugins: ["babel-plugin-react-compiler"],
       },
     }),
   ],

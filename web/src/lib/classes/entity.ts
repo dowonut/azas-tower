@@ -13,7 +13,6 @@ import { PerfectSprite } from "./perfect-sprite";
 import type { World } from "./world";
 import { isometricToCartesian } from "../functions/isometric-to-cartesian";
 import type { Heading } from "../types";
-import { AnimatedEntity } from "./animated-entity";
 
 export type EntityAnimation = "idle" | "walking";
 
@@ -180,7 +179,7 @@ export class Entity extends Container {
     if (state) this._state = state;
     const texture = this.getStateTexture(state, heading);
     const isArray = Array.isArray(texture);
-    if (this instanceof AnimatedEntity) {
+    if (this.sprite instanceof AnimatedSprite) {
       this.sprite.textures = isArray ? texture : [texture];
       this.sprite.animationSpeed = animationSpeed[this._state];
       this.sprite.play();

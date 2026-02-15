@@ -24,6 +24,10 @@ import { cartesianToIsometric } from "../functions/cartesian-to-isometric";
 import type { Server } from "./server";
 import type { Entity } from "./entity";
 import type { AnimatedEntity } from "./animated-entity";
+import { ClientServerEvent } from "@generated/server";
+import { addComponent, type EntityId } from "bitecs";
+import { DesiredPosition } from "@ecs/components";
+import type { World as ECSWorld } from "@ecs/world";
 
 export type WorldOptions = {
   server: Server;
@@ -34,6 +38,8 @@ export type WorldOptions = {
  * The World class is responsible for the actual game world
  */
 export class World extends Container {
+  world!: ECSWorld;
+
   private server!: Server;
   private renderNormals!: boolean;
 
@@ -56,6 +62,7 @@ export class World extends Container {
   public pathfindingGridRatio: number;
 
   private player?: Player;
+  playerId?: EntityId;
 
   public static readonly DEFAULT_OPTIONS: Partial<WorldOptions> = {
     renderNormals: false,
@@ -154,7 +161,7 @@ export class World extends Container {
   /** Handle click events */
   onpointerup = (e: FederatedPointerEvent) => {
     // Ignore non-primary clicks
-    if (e.button !== 0 || !this.player) return;
+    if (e.button !== 0 || !this.playerId) return;
     e.stopPropagation();
 
     // Capture and round global (screen) point
@@ -175,53 +182,63 @@ export class World extends Container {
     // this.server.socket.emit("player:move", desiredPosition);
 
     const validTile = getWalkableTileAt({
-      player: this.player,
+      player: this.playerId,
       point: desiredPosition,
       tiles: this.tiles,
     });
 
     if (!validTile) return;
 
-    // Run pathfinding algorithm
-    const fromPoint = isometricToCartesian(this.player.position, {
-      tileRatio: this.pathfindingGridRatio,
-    });
-    const toPoint = isometricToCartesian(desiredPosition, {
-      tileRatio: this.pathfindingGridRatio,
-    });
-    console.log(
-      `Attempting to pathfind from ${toTextPoint(fromPoint)} to ${toTextPoint(toPoint)}`,
-    );
-    const ratio = map.width / this.pathfindingGrid.width;
-    const path = findPath({
-      from: fromPoint,
-      to: toPoint,
-      grid: this.pathfindingGrid,
-    });
+    // // Run pathfinding algorithm
+    // const fromPoint = isometricToCartesian(this.player.position, {
+    //   tileRatio: this.pathfindingGridRatio,
+    // });
+    // const toPoint = isometricToCartesian(desiredPosition, {
+    //   tileRatio: this.pathfindingGridRatio,
+    // });
+    // console.log(
+    //   `Attempting to pathfind from ${toTextPoint(fromPoint)} to ${toTextPoint(toPoint)}`,
+    // );
+    // const ratio = map.width / this.pathfindingGrid.width;
+    // const path = findPath({
+    //   from: fromPoint,
+    //   to: toPoint,
+    //   grid: this.pathfindingGrid,
+    // });
 
-    if (!path) {
-      console.log(`Unable to find path`);
-      return;
-    }
+    // if (!path) {
+    //   console.log(`Unable to find path`);
+    //   return;
+    // }
 
-    // Map to map coordinates
-    const desiredPositions = path.map((point) =>
-      cartesianToIsometric(point, { tileRatio: ratio, withTileOffset: false }),
-    );
+    // // Map to map coordinates
+    // const desiredPositions = path.map((point) =>
+    //   cartesianToIsometric(point, { tileRatio: ratio, withTileOffset: false }),
+    // );
 
-    // Set final position to the actual position wanted by the player
-    desiredPositions[desiredPositions.length - 1] = desiredPosition;
+    // // Set final position to the actual position wanted by the player
+    // desiredPositions[desiredPositions.length - 1] = desiredPosition;
 
     // console.log(
     //   `Moving to desired position...\nScreen: (${globalPoint.x}, ${globalPoint.y})\nLocal: (${desiredPosition.x}, ${desiredPosition.y})\nTile: (${tilePosition.x}, ${tilePosition.y})`,
     // );
 
-    this.player.desiredPositions = desiredPositions;
+    // this.player.desiredPositions = desiredPositions;
+
+    console.log(`Requesting move to ${toTextPoint(desiredPosition)}`);
+
+    // Update desired position to trigger movement
+    console.log("Setting desiredPosition");
+    addComponent(this.world, this.playerId, DesiredPosition);
+    DesiredPosition[this.playerId] = desiredPosition;
+
+    // Emit move event to server
+    this.server.emit(ClientServerEvent.PlayerMove, desiredPosition);
   };
 
   /** Generate the world's pathfinding grid */
   private generatePathfindingGrid() {
-    if (!this.player) return;
+    if (!this.playerId) return;
     const ratio = this.pathfindingGridRatio;
     for (let y = 0; y < this.pathfindingGrid.height; y++) {
       for (let x = 0; x < this.pathfindingGrid.width; x++) {
@@ -230,7 +247,7 @@ export class World extends Container {
           { tileRatio: ratio, withTileOffset: false },
         );
         const validTile = getWalkableTileAt({
-          player: this.player,
+          player: this.playerId,
           point: worldPoint,
           tiles: this.tiles,
           onlyCurrentLayer: true,

@@ -2,6 +2,8 @@ import type { PointData } from "pixi.js";
 import { getTilesAt } from "./get-tiles-at";
 import type { WorldTile } from "../classes/world-tile";
 import type { Player } from "../classes/player";
+import type { EntityId } from "bitecs";
+import { Layer } from "@ecs/components";
 
 /** Check if there's a walkable tile at some world point */
 export function getWalkableTileAt({
@@ -11,7 +13,8 @@ export function getWalkableTileAt({
   onlyTopTile = false,
   onlyCurrentLayer = false,
 }: {
-  player: Player;
+  // player: Player;
+  player: EntityId;
   point: PointData;
   tiles: WorldTile[];
   onlyTopTile?: boolean;
@@ -23,6 +26,7 @@ export function getWalkableTileAt({
     tiles,
   });
   if (!tilesAtPoint || tilesAtPoint.length < 1) return null;
+  const layer = Layer[player];
 
   // Check if point within tile is walkable
   let validTile: WorldTile | undefined;
@@ -31,7 +35,7 @@ export function getWalkableTileAt({
     const tile = tilesAtPoint[i];
 
     // Skip if not current layer when only current layer
-    if (onlyCurrentLayer && tile.layer !== player.layer) continue;
+    if (onlyCurrentLayer && tile.layer !== layer) continue;
 
     const localTilePoint = {
       x: point.x - tile.position.x,

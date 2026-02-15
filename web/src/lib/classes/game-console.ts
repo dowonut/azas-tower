@@ -74,12 +74,12 @@ export class GameConsole extends Container {
     });
     this.addChild(this.input);
 
-    // // Listen to messages from the server
-    // this.game.server.onMessages((messages) => {
-    //   console.log(`Console received messages:`, messages);
-    //   this.replaceMessages(messages);
-    //   // this.addMessage(...messages);
-    // });
+    // Listen to messages from the server
+    this.game.server.onMessage((message) => {
+      console.log(`Console received message:`, message);
+      // this.replaceMessages(messages);
+      this.addMessage(message);
+    });
   }
 
   /** Trigger the console to render */
@@ -88,7 +88,7 @@ export class GameConsole extends Container {
     if (this.messages.length < 1) return;
 
     // Slice messages on overflow
-    let visibleMessages = this.messages;
+    let visibleMessages: Partial<ServerMessage>[] = this.messages;
     if (visibleMessages.length > this.MAX_MESSAGES) {
       visibleMessages = visibleMessages.slice(-this.MAX_MESSAGES);
       visibleMessages.unshift({
@@ -112,9 +112,12 @@ export class GameConsole extends Container {
     for (let i = 0; i < visibleMessages.length; i++) {
       const message = visibleMessages[i];
       const messageY = i * messageHeight + padding - this.TEXT_OFFSET;
-      const typePrefix = message.authorType === "server" ? "server" : null;
+      const typePrefix =
+        message.authorType === MessageAuthorType.Server ? "server" : null;
       const authorPrefix =
-        message.authorType === "user" ? message.authorName : null;
+        message.authorType === MessageAuthorType.User
+          ? message.authorName
+          : null;
       const typePrefixText = typePrefix
         ? new Text({
             text: `[${typePrefix}] `,
@@ -161,6 +164,7 @@ export class GameConsole extends Container {
   /** Add a message to the console */
   addMessage(...messages: ServerMessage[]) {
     for (const message of messages) {
+      if (this.messages.some((x) => x.id === message.id)) continue;
       this.messages.push(message);
     }
 

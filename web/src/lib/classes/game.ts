@@ -1,11 +1,9 @@
 import { CustomViewport } from "@classes/custom-viewport";
-import { DebugOverlay } from "@classes/debug-overlay";
-import type { EntityAnimation } from "@classes/entity";
-import { GameConsole } from "@classes/game-console";
-import { MoveIndicator } from "@classes/move-indicator";
+import { Entity } from "@classes/entity";
 import { Player } from "@classes/player";
 import { Server } from "@classes/server";
 import { World } from "@classes/world";
+import { RenderType, type EntitySyncPacket } from "@generated/server";
 import {
   Application,
   Assets,
@@ -13,8 +11,6 @@ import {
   TextStyle,
   TextureStyle,
 } from "pixi.js";
-import { handlePlayerMovement } from "../handlers/handle-player-movement";
-import type { PlayerBundle } from "@generated/server";
 
 /**
  * The main Game class that initializes and holds references to all major components of the game
@@ -139,7 +135,35 @@ export class Game {
   }
 
   /** Spawn a new entity or update an existing one */
-  public spawnOrUpdateEntity(entity: PlayerBundle) {
-    console.log(entity);
+  public spawnOrUpdateEntity(entityPacket: EntitySyncPacket) {
+    const isAnimated =
+      entityPacket.renderable.renderType === RenderType.Animated;
+
+    const entityName = entityPacket.connectionId;
+    const exists = this.entityContainer.getChildByLabel(entityName);
+
+    // Update existing entity
+    if (exists) {
+      console.log("Updating existing entity", entityName);
+      const entity = exists as Entity;
+      entity.position = entityPacket.position;
+    }
+    // Spawn new entity
+    else {
+      console.log("Spawning new entity", entityName);
+      const entity = new Player({
+        world: this.world,
+        label: entityName,
+        position: entityPacket.position,
+      });
+      this.entityContainer.addChild(entity);
+
+      // Attach the current player to the world
+      const isSelf = entityPacket.connectionId === this.server.socket.id;
+      this.world.attachEntity({
+        entity,
+        isPlayer: isSelf,
+      });
+    }
   }
 }

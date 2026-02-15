@@ -7,6 +7,7 @@
     "module": "ESNext",
     "types": ["vite/client", "vite-plugin-glsl/ext"],
     "skipLibCheck": true,
+    "experimentalDecorators": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -27,7 +28,9 @@
     /* Path aliases */
     "paths": {
       "@classes/*": ["./src/lib/classes/*"],
-      "@generated/*": ["./generated/*"]
+      "@generated/*": ["./generated/*"],
+      "@ecs/*": ["./src/lib/ecs/*"],
+      "@assets/*": ["./src/assets/*"]
     }
   },
   "include": ["src", "generated"]

@@ -1,5 +1,5 @@
 import { AnimatedSprite, type AnimatedSpriteOptions } from "pixi.js";
-import { Entity, type EntityOptions } from "./entity";
+import { Entity, type EntityOptions } from "@classes/entity";
 
 export type AnimatedEntityOptions = Omit<EntityOptions, "sprite"> & {
   sprite: AnimatedSpriteOptions;
