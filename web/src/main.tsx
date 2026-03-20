@@ -128,7 +128,7 @@ createRoot(document.getElementById("root")!).render(
   const player = new Player({ world });
   world.attachEntity({ entity: player, isPlayer: true });
 
-  // Creat move indicator
+  // Create move indicator
   const moveIndicator = await MoveIndicator.init({ player });
 
   // Create entity container
